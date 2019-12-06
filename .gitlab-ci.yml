@@ -1,0 +1,23 @@
+image: maven:latest
+
+stages: # 要执行的步骤
+  - build
+  - deploy
+
+build: # 步骤 build
+    stage: build
+    only:
+      - test # 当提交到master分支或tags时才触发此build命令
+    tags:
+      - test # 由shell执行，tag名是 test
+    script:
+      - mvn compile # 要执行的命令
+
+deploy:
+    stage: deploy
+    only:
+      - test
+    tags:
+      - test
+    script:
+      - mvn deploy
