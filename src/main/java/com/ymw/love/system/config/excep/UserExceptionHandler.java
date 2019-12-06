@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserExceptionHandler<ServiceException extends BizException> {
    
-	@Value("${jpush.ios.apn}")
+	@Value("${environ}")
 	private String environ;
 	
 	
