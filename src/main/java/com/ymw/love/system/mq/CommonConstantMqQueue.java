@@ -6,4 +6,16 @@ package com.ymw.love.system.mq;
 */
 public interface CommonConstantMqQueue {
 	public String SYS_ADMIN_LOG="sys.admin.log";
+	
+	/**
+	 * 新手任务队列
+	 */
+	public String TOWN_NEW_TASK="town.new.task";
+	
+	
+	
+	
+	
+	
+	
 }
