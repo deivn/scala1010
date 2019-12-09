@@ -7,7 +7,7 @@ stages: # 要执行的步骤
 build: # 步骤 build
     stage: build
     only:
-      - test # 当提交到master分支或tags时才触发此build命令
+      - test # 当提交到test分支或tags时才触发此build命令
     tags:
       - test # 由shell执行，tag名是 test
     script:
