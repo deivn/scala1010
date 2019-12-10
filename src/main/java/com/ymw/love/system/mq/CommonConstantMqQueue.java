@@ -11,6 +11,11 @@ public interface CommonConstantMqQueue {
 	 * 新手任务队列
 	 */
 	public String TOWN_NEW_TASK="town.new.task";
+
+	/**
+	 * 完成后，能量发送统计
+	 */
+	public String TOWN_TASK_FINISH_ADD="town.task.finish.add";
 	
 	
 	

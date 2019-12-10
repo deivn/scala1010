@@ -1331,11 +1331,12 @@ public class DateUtil {
 
 	
 	public static void main(String[] args) {
-		Calendar instance = Calendar.getInstance();
-		instance.set(Calendar.YEAR, 2019);
-		instance.set(Calendar.MONTH, 11);
-		instance.set(Calendar.DAY_OF_MONTH, 8);
-		System.out.println(instance.getTime().getTime());
+		System.out.println(currentDateBefore(1));
+//		Calendar instance = Calendar.getInstance();
+//		instance.set(Calendar.YEAR, 2019);
+//		instance.set(Calendar.MONTH, 11);
+//		instance.set(Calendar.DAY_OF_MONTH, 8);
+//		System.out.println(instance.getTime().getTime());
 //		System.out.println(getNextMonthFirstDay(new Date()));
 //		System.out.println(getCurrentMonthStartEndTime());
 //        System.out.println(dateAfterMonth(1574404629l, 1));
