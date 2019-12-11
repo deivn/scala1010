@@ -16,6 +16,11 @@ public interface CommonConstantMqQueue {
 	 * 完成后，能量发送统计
 	 */
 	public String TOWN_TASK_FINISH_ADD="town.task.finish.add";
+
+	/**
+	 * 完成任务后，设置能量过期
+	 */
+	public String TOWN_TASK_ENERGY_EXPIRED="town.task.energy.expired";
 	
 	
 	

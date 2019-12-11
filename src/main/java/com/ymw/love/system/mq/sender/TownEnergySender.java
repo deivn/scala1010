@@ -15,10 +15,14 @@ public class TownEnergySender {
 
     /**
      *
-     *能量发送统计
+     *能量收取发送统计
      */
     public void energyFinishAdd(Map<String, Object> sendMap){
         rabbitTemplate.convertAndSend(CommonConstantMqQueue.TOWN_TASK_FINISH_ADD, sendMap);
+    }
+
+    public void energyExpired(Map<String, Object> sendMap){
+        rabbitTemplate.convertAndSend(CommonConstantMqQueue.TOWN_TASK_ENERGY_EXPIRED, sendMap);
     }
 
 
