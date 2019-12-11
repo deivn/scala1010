@@ -30,5 +30,8 @@ public class TownTask {
 	 * 任务说明
 	 */
 	private String introduce;
+	
+	
+    private Integer energy;
 
 }
