@@ -1230,6 +1230,24 @@ public class DateUtil {
 		return cal.getTime().getTime();
 	}
 
+	public static Map<String, String> yesterdayStartEnd(){
+		Map<String, String> yesterdayMap = new HashMap<String, String>();
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY,-24);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+
+		Date start = calendar.getTime();
+
+		calendar.add(Calendar.DAY_OF_MONTH, 1);
+		calendar.add(Calendar.SECOND, -1);
+
+		Date end = calendar.getTime();
+		yesterdayMap.put("start",parseDateToStr(start, DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
+		yesterdayMap.put("end", parseDateToStr(end, DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
+		return yesterdayMap;
+    }
+
 
 		/**
       * 判断时间是否在时间段内
@@ -1331,7 +1349,8 @@ public class DateUtil {
 
 	
 	public static void main(String[] args) {
-		System.out.println(currentDateBefore(1));
+		yesterdayStartEnd();
+//		System.out.println(currentDateBefore(1));
 //		Calendar instance = Calendar.getInstance();
 //		instance.set(Calendar.YEAR, 2019);
 //		instance.set(Calendar.MONTH, 11);
