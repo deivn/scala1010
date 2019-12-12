@@ -13,6 +13,11 @@ public interface CommonConstantMqQueue {
 	public String TOWN_NEW_TASK="town.new.task";
 
 	/**
+	 * 每日任务
+	 */
+	public String TOWN_DAILY_TASK = "town.daily.task";
+
+	/**
 	 * 完成后，能量发送统计
 	 */
 	public String TOWN_TASK_FINISH_ADD="town.task.finish.add";

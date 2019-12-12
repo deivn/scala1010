@@ -1230,10 +1230,15 @@ public class DateUtil {
 		return cal.getTime().getTime();
 	}
 
-	public static Map<String, String> yesterdayStartEnd(){
+	/**
+	 * 获取指定日期的起始时间
+	 * @param dayLimit
+	 * @return
+	 */
+	public static Map<String, String> somedayStartEnd(Integer dayLimit){
 		Map<String, String> yesterdayMap = new HashMap<String, String>();
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.HOUR_OF_DAY,-24);
+		calendar.set(Calendar.HOUR_OF_DAY, dayLimit);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 
@@ -1349,7 +1354,7 @@ public class DateUtil {
 
 	
 	public static void main(String[] args) {
-		yesterdayStartEnd();
+		System.out.println(somedayStartEnd(0));
 //		System.out.println(currentDateBefore(1));
 //		Calendar instance = Calendar.getInstance();
 //		instance.set(Calendar.YEAR, 2019);
