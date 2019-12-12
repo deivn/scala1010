@@ -21,6 +21,16 @@ public interface CommonConstantMqQueue {
 	 * 完成任务后，设置能量过期
 	 */
 	public String TOWN_TASK_ENERGY_EXPIRED="town.task.energy.expired";
+
+	/**
+	 * 消息推送
+	 */
+	public String MESSAGE_PUSH = "message.push";
+
+	/**
+	 * 小镇动态消息(保留3天)
+	 */
+	public String TOWN_TASK_DYNAMIC_MESSAGE = "town.task.dynamic.message";
 	
 	
 	
