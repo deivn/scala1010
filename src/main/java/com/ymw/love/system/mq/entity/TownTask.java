@@ -1,5 +1,7 @@
 package com.ymw.love.system.mq.entity;
 
+import java.io.Serializable;
+
 import lombok.Data;
 
 /**
@@ -8,7 +10,13 @@ import lombok.Data;
 *类说明：小镇任务
 */
 @Data
-public class TownTask {
+public class TownTask implements  Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4651066591314219454L;
+
 
 	public TownTask(){}
 
