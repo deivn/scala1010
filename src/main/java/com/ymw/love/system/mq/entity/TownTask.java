@@ -10,6 +10,13 @@ import lombok.Data;
 @Data
 public class TownTask {
 
+	public TownTask(){}
+
+	public TownTask(String uid, Integer subType){
+		this.uid = uid;
+		this.subType = subType;
+	}
+
 	private String uid;
 
 	/**
