@@ -42,10 +42,4 @@ public interface CommonConstantMqQueue {
 	 */
 	public String TOWN_WALKING_ENERGY_EXPIRED = "town.walking.enegry.expired";
 
-
-
-
-
-
-
 }
