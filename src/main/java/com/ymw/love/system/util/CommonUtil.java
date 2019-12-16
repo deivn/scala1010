@@ -1,13 +1,14 @@
 package com.ymw.love.system.util;
 
-import com.ymw.love.system.config.HintTitle;
-import com.ymw.love.system.config.excep.MissRequiredParamException;
-
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.ymw.love.system.config.Constant;
+import com.ymw.love.system.config.excep.MissRequiredParamException;
 
 /**
  * 通用工具类
@@ -93,7 +94,7 @@ public class CommonUtil {
         //优先级，先按固定值查询
         if(dateValue != null){
             if(dateValue<1 || dateValue > 5){
-                throw new MissRequiredParamException(HintTitle.Constant.QUERY_PARAM_INVALID);
+                throw new MissRequiredParamException(Constant.QUERY_PARAM_INVALID);
             }
             ruleMap = CommonUtil.getFinishEndDateByDateValue(dateValue);
         }else{
@@ -117,9 +118,10 @@ public class CommonUtil {
         if(StringUtils.isNotEmpty(startDate) && StringUtils.isNotEmpty(endDate)){
             Long dateDistance = DateUtil.getDistance(endDate, startDate);
             if(dateDistance < 0){
-                throw new MissRequiredParamException(HintTitle.Constant.ENDDATE_INVALID);
+                throw new MissRequiredParamException(Constant.ENDDATE_INVALID);
             }
         }
+        
         ruleMap.put("startDate", startDate);
         ruleMap.put("endDate", endDate);
         return ruleMap;
