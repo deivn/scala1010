@@ -1,8 +1,10 @@
 package com.ymw.love.system.config.excep;
 
 
+import com.ymw.love.system.util.BeanValidatorUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,6 +15,9 @@ import com.ymw.love.system.config.HintTitle;
 import com.ymw.love.system.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.ConstraintViolationException;
+
 
 /**
  * @Describe: 描述 全局捕获异常
@@ -40,7 +45,7 @@ public class UserExceptionHandler<ServiceException extends BizException> {
         Result result = new Result();
         result.setCode(SystemEnum.SYSTEM_ERROR);
         if(e instanceof HttpMessageNotReadableException) { //传参不规范异常
-        result.setMsg(HintTitle.System.parameter_format_error);
+            result.setMsg(HintTitle.System.parameter_format_error);
         }else {
         	//判断是否环境，是否要返回异常详情
         	if(StringUtils.isEmpty(environ) || !Boolean.parseBoolean(environ)) {
@@ -50,9 +55,39 @@ public class UserExceptionHandler<ServiceException extends BizException> {
         	}
 
         }
-         
         log.error("接口异常",e.getMessage());
         e.printStackTrace();
+        return result;
+    }
+
+
+    /**
+     * 验证单个参数
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Result handlerConstraintViolationException(ConstraintViolationException e) {
+        log.error("参数检验错误",e.getMessage());
+        Result result = new Result();
+        result.setCode(SystemEnum.FAIL);
+        result.setMsg(BeanValidatorUtil.getErrorMessage(e));
+        return result;
+    }
+
+
+    /**
+     * 验证对象属性
+     * @RequestBody
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Result handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("实体属性验证错误",e.getMessage());
+        Result result = new Result();
+        result.setCode(SystemEnum.FAIL);
+        result.setMsg(e.getBindingResult().getFieldError().getDefaultMessage());
         return result;
     }
 }
