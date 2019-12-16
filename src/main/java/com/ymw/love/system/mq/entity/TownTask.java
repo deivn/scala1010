@@ -25,6 +25,14 @@ public class TownTask implements  Serializable{
 		this.subType = subType;
 	}
 
+	public TownTask(String uid, Integer type, Integer subType, String name, Integer energy){
+		this.uid = uid;
+		this.type = type;
+		this.subType = subType;
+		this.name = name;
+		this.energy = energy;
+	}
+
 	private String uid;
 
 	/**

@@ -1352,9 +1352,36 @@ public class DateUtil {
         return finishDate.getTime()/1000 - nowDate.getTime()/1000;
 	}
 
+    /**
+     * 获取往后两天8点到现在的秒值
+     * @return
+     */
+    public static Long getDistanceBetweenDate(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.add(Calendar.DAY_OF_MONTH, 2);
+        return calendar.getTime().getTime()/1000 - new Date().getTime()/1000;
+    }
+
+    /**
+     * 2天后的8点
+     * @return
+     */
+    public static Date daysAfter8Clock(int days){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.add(Calendar.DAY_OF_MONTH, days);
+        return calendar.getTime();
+    }
+
 	
 	public static void main(String[] args) {
-		System.out.println(somedayStartEnd(0));
+		System.out.println(parseDateToStr(daysAfter8Clock(2), DATE_TIME_FORMAT_HH_MM_SS_MM_DD_YYYY));
+//		System.out.println(somedayStartEnd(0));
 //		System.out.println(currentDateBefore(1));
 //		Calendar instance = Calendar.getInstance();
 //		instance.set(Calendar.YEAR, 2019);
