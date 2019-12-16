@@ -1,4 +1,6 @@
 package com.ymw.love.system.config;
+
+
 /**
 * @author  作者 ：suhua
 * @date 创建时间：2019年12月6日 上午10:23:53
@@ -6,12 +8,6 @@ package com.ymw.love.system.config;
 */
 public interface HintTitle {
 
-	public interface Constant{
-	    public  String QUERY_PARAM_INVALID = "日期选择参数不合法!";
-	    public  String ENDDATE_INVALID = "结束时间不能小于起始时间!";
-	}
-	
-	
 	public interface System{
 		 /**
 		  * 操作失败
@@ -27,7 +23,8 @@ public interface HintTitle {
 		  * 请登录
 		  */
 		 String Please_login="请登录";
-		
+
+
 		   /**
 			 * 解析错误
 			 */
@@ -42,8 +39,12 @@ public interface HintTitle {
 		 * 权限不足
 		 */
 		String no_authority_error="权限不足";
-		
-		
+
+		/**
+		 * 传参不能为空
+		 */
+		String parameter_is_null="传参不能为空";
+
 		/**
 		 * 传参格式不规范
 		 */
@@ -67,13 +68,26 @@ public interface HintTitle {
 		 *该接口不需要加密
 		 */
 		String no_encrypt_error="该接口不需要加密";
-		
+
+		/**
+		 * 文件数量超出范围
+		 */
+		String file_scope_error="文件数量超出范围";
+
 		/**
 		 * 设备异常
 		 */
 		String plant_error="设备异常";
-		
-	
+
+		/**
+		 * 视频格式错误
+		 */
+		String  video_format_error="视频格式错误";
+
+		/**
+		 * 图片格式错误
+		 */
+		String  img_format_error="图片格式错误";
 		
 	}
 }
