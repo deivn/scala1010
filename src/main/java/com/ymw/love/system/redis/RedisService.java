@@ -148,8 +148,7 @@ public class RedisService<T> {
      * @param key
      * @return
      */
-    public Long incr(String key) {
-        Long result = 0l;
+    public Long incr(String key, Long result) {
         try {
             result = redisTemplate.opsForValue().increment(key);
         } catch (Exception e) {

@@ -258,6 +258,16 @@ public class DateUtil {
 
 	/**
 	 * 格式化Date时间
+	 *
+	 * @param time       Date类型时间
+	 * @return 格式化后的字符串
+	 */
+	public static String parseDateToStr(Date time) {
+		return parseDateToStr(time,DATE_TIME_FORMAT_YYYYMMDDHHMISS);
+	}
+
+	/**
+	 * 格式化Date时间
 	 * 
 	 * @param time       Date类型时间
 	 * @param timeFromat String类型格式
