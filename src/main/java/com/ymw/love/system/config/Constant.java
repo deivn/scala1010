@@ -52,7 +52,7 @@ public class Constant {
 
     public static final String ADDRESS_INFO_EMPTY = "地址信息不存在";
 
-    public static final String ADDRESS_SELECT_EMPTY = "请选择收货地址";
+    public static final String ADDRESS_SELECT_EMPTY = "请添加收货地址";
 
     public static final String GOODS_SKU_NOT_ENOUGH ="商品库存不足";
 
