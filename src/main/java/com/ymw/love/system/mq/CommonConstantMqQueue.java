@@ -33,11 +33,6 @@ public interface CommonConstantMqQueue {
 	public String MESSAGE_PUSH = "message.push";
 
 	/**
-	 * 小镇动态消息(保留3天)
-	 */
-	public String TOWN_TASK_DYNAMIC_MESSAGE = "town.task.dynamic.message";
-
-	/**
 	 * 走路获取能量过期，往后2天8点
 	 */
 	public String TOWN_WALKING_ENERGY_EXPIRED = "town.walking.enegry.expired";

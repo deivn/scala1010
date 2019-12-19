@@ -1380,8 +1380,9 @@ public class DateUtil {
 
 	
 	public static void main(String[] args) {
-		System.out.println(parseDateToStr(daysAfter8Clock(2), DATE_TIME_FORMAT_HH_MM_SS_MM_DD_YYYY));
-//		System.out.println(somedayStartEnd(0));
+//        System.out.println(currentDateAfter(-1));
+//		System.out.println(parseDateToStr(daysAfter8Clock(2), DATE_TIME_FORMAT_HH_MM_SS_MM_DD_YYYY));
+		System.out.println(somedayStartEnd(0));
 //		System.out.println(currentDateBefore(1));
 //		Calendar instance = Calendar.getInstance();
 //		instance.set(Calendar.YEAR, 2019);
