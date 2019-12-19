@@ -190,14 +190,18 @@ public class DateUtil {
 		return msg;
 	}
 
+	public static Long getDistance(String str1, String str2){
+		return getDistance(str1,str2,DATE_FORMAT_YYYY_MM_DD);
+	}
+
 	/**
 	 * 两个时间之间相差距离多少天
 	 * @param str1 时间参数 1：
 	 * @param str2 时间参数 2：
 	 * @return 相差天数
 	 */
-	public static Long getDistance(String str1, String str2){
-		DateFormat df = new SimpleDateFormat(DATE_TIME_FORMAT_YYYYMMDDHHMISS);
+	public static Long getDistance(String str1, String str2,String format){
+		DateFormat df = new SimpleDateFormat(format);
 		Date one;
 		Date two;
 		long days=0;
