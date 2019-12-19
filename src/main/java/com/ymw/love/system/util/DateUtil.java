@@ -190,14 +190,18 @@ public class DateUtil {
 		return msg;
 	}
 
+	public static Long getDistance(String str1, String str2){
+		return getDistance(str1,str2,DATE_FORMAT_YYYY_MM_DD);
+	}
+
 	/**
 	 * 两个时间之间相差距离多少天
 	 * @param str1 时间参数 1：
 	 * @param str2 时间参数 2：
 	 * @return 相差天数
 	 */
-	public static Long getDistance(String str1, String str2){
-		DateFormat df = new SimpleDateFormat(DATE_FORMAT_YYYY_MM_DD);
+	public static Long getDistance(String str1, String str2,String format){
+		DateFormat df = new SimpleDateFormat(format);
 		Date one;
 		Date two;
 		long days=0;
@@ -254,6 +258,16 @@ public class DateUtil {
 			msg = "Just,Less than a minute";
 		}
 		return msg;
+	}
+
+	/**
+	 * 格式化Date时间
+	 *
+	 * @param time       Date类型时间
+	 * @return 格式化后的字符串
+	 */
+	public static String parseDateToStr(Date time) {
+		return parseDateToStr(time,DATE_TIME_FORMAT_YYYYMMDDHHMISS);
 	}
 
 	/**

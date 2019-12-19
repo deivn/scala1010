@@ -47,10 +47,10 @@ public class AuthorityIntercept implements HandlerInterceptor{
 		     Method method = handlerMethod.getMethod();
 	         Authority authority = method.getAnnotation(Authority.class);
          
-	         String sign= request.getHeader("SIGN");
+	        /* String sign= request.getHeader("SIGN");
 			 if(StringUtils.isEmpty(sign)) {
 					throw new MissRequiredParamException( SystemEnum.FAIL, HintTitle.System.sign_error);
-			 }
+			 }*/
 	         
 		 if(StringUtils.isEmpty(authority)) {
 			 return true;

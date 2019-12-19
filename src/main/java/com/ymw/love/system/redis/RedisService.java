@@ -1,13 +1,14 @@
 package com.ymw.love.system.redis;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import com.ymw.love.system.util.StringUtils;
 
 /**
  * @Date : 15:12 2018/10/16
@@ -148,12 +149,46 @@ public class RedisService<T> {
      * @param key
      * @return
      */
-    public Long incr(String key) {
-        Long result = 0l;
+    public Long incr(String key, Long result) {
         try {
             result = redisTemplate.opsForValue().increment(key);
         } catch (Exception e) {
         }
         return result;
     }
+    
+    /**
+     * 加锁
+     * @param key   键
+     * @param value 当前时间 + 超时时间
+     * @param time  设置失效时间
+     * @return 是否拿到锁
+     */
+    public boolean lock(String key, String value,Long time) {
+        if (redisTemplate.opsForValue().setIfAbsent(key, value,time ,TimeUnit.SECONDS)) {
+            return true;
+        }
+        String currentValue = (String) redisTemplate.opsForValue().get(key);
+        //如果锁过期
+        if (StringUtils.isNotEmpty(currentValue) && Long.parseLong(currentValue) < System.currentTimeMillis()) {
+            String oldValue = (String) redisTemplate.opsForValue().getAndSet(key, value);
+            //是否已被别人抢占
+            return StringUtils.isNotEmpty(oldValue) && oldValue.equals(currentValue);
+        }
+        return false;
+    }
+ 
+    /**
+     * 解锁
+     *
+     * @param key   键
+     * @param value 当前时间 + 超时时间
+     */
+    public void unlock(String key, String value) {   
+            String currentValue = (String) redisTemplate.opsForValue().get(key);
+            if (StringUtils.isNotEmpty(currentValue) && currentValue.equals(value)) {
+                redisTemplate.opsForValue().getOperations().delete(key);
+            }
+    }
+    
 }
