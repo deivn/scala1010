@@ -56,5 +56,5 @@ public class Constant {
 
     public static final String GOODS_SKU_NOT_ENOUGH ="商品库存不足";
 
-    public static final String USER_ENERGY_NOT_ENOUGH ="您的能量不足";
+    public static final String USER_ENERGY_NOT_ENOUGH ="兑换能量不足";
 }

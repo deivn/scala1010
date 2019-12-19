@@ -197,7 +197,7 @@ public class DateUtil {
 	 * @return 相差天数
 	 */
 	public static Long getDistance(String str1, String str2){
-		DateFormat df = new SimpleDateFormat(DATE_FORMAT_YYYY_MM_DD);
+		DateFormat df = new SimpleDateFormat(DATE_TIME_FORMAT_YYYYMMDDHHMISS);
 		Date one;
 		Date two;
 		long days=0;
