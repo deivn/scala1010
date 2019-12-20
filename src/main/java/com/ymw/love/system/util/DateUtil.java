@@ -1267,6 +1267,30 @@ public class DateUtil {
 		return yesterdayMap;
     }
 
+    /**
+     * 获取指定日期的起始时间
+     * @param dayLimit
+     * @return
+     */
+    public static Map<String, Date> somedayStartEndDate(Date date, Integer dayLimit){
+        Map<String, Date> yesterdayMap = new HashMap<String, Date>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, dayLimit);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        Date start = calendar.getTime();
+
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.SECOND, -1);
+
+        Date end = calendar.getTime();
+        yesterdayMap.put("start",start);
+        yesterdayMap.put("end", end);
+        return yesterdayMap;
+    }
+
 
 		/**
       * 判断时间是否在时间段内
@@ -1393,11 +1417,22 @@ public class DateUtil {
     }
 
     /**
-     * Date时间转mongoDB的ISODate
+     * 今天Date时间转mongoDB的ISODate
      * @return
      */
     public static Date dateToISODate() {
         Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY)+8);
+        return cal.getTime();
+    }
+
+    /**
+     * Date时间转mongoDB的ISODate
+     * @return
+     */
+    public static Date dateToISODate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY)+8);
         return cal.getTime();
     }
@@ -1409,13 +1444,42 @@ public class DateUtil {
         return cal.getTime();
     }
 
+    /**
+     * 最近三天日期
+     * @return
+     */
+    public static Map<String, Map<String, Date>> latestThreeDays(){
+        Map<String, Map<String, Date>> dateMap = new HashMap<String, Map<String, Date>>();
+        Calendar cal = Calendar.getInstance();
+        Date today = cal.getTime();
+        dateMap.put("today", somedayStartEndDate(today, 0));
+        cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH)-1);
+        Date yesterday = cal.getTime();
+        dateMap.put("yesterday", somedayStartEndDate(yesterday, 0));
+        cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH)-1);
+        Date qt = cal.getTime();
+        dateMap.put("qt", somedayStartEndDate(qt, 0));
+        return dateMap;
+    }
+
 	
 	public static void main(String[] args) {
 //        System.out.println(currentDateAfter(-1));
 //		System.out.println(parseDateToStr(daysAfter8Clock(2), DATE_TIME_FORMAT_HH_MM_SS_MM_DD_YYYY));
 //		System.out.println(somedayStartEnd(0));
-        System.out.println(parseDateToStr(new Date(), DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
-		System.out.println(parseDateToStr(dateToISODate(),DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS) );
+        Map<String, Map<String, Date>> threeDays = latestThreeDays();
+        Iterator<Map.Entry<String, Map<String, Date>>> iterator =threeDays.entrySet().iterator();
+//        String key1 = iterator.next().getKey();
+        while(iterator.hasNext()){
+            Map.Entry<String, Map<String, Date>> next = iterator.next();
+            Iterator<Map.Entry<String, Date>> iter = next.getValue().entrySet().iterator();
+            while(iter.hasNext()){
+                Map.Entry<String, Date> next2 = iter.next();
+                System.out.println("key1: "+next.getKey()+" key2: "+next2.getKey()+" value: "+parseDateToStr(next2.getValue(), DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
+            }
+        }
+//        System.out.println(parseDateToStr(new Date(), DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
+//		System.out.println(parseDateToStr(dateToISODate(),DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS) );
 //		System.out.println(currentDateBefore(1));
 //		Calendar instance = Calendar.getInstance();
 //		instance.set(Calendar.YEAR, 2019);
