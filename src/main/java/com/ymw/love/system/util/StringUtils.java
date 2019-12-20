@@ -4,6 +4,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -13,6 +15,7 @@ public class StringUtils {
     private static final String FOLDER_SEPARATOR = "/";
     private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
     private static final String TOP_PATH = "..";
+    private static final String STR_REG = ".{1}";
     private static final String CURRENT_PATH = ".";
     private static final char EXTENSION_SEPARATOR = '.';
 
@@ -745,5 +748,21 @@ public class StringUtils {
 
     public static String arrayToCommaDelimitedString(Object[] arr) {
         return arrayToDelimitedString(arr, ",");
+    }
+
+
+    public static String replaceNameX(String str){
+        StringBuffer sb = new StringBuffer();
+        Pattern p = Pattern.compile(STR_REG);
+        Matcher m = p.matcher(str);
+        int i = 0;
+        while(m.find()){
+            i++;
+            if(i==1)
+                continue;
+            m.appendReplacement(sb, "*");
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 }
