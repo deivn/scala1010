@@ -1402,6 +1402,13 @@ public class DateUtil {
         return cal.getTime();
     }
 
+    public static Date iSODateToDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY)-8);
+        return cal.getTime();
+    }
+
 	
 	public static void main(String[] args) {
 //        System.out.println(currentDateAfter(-1));
