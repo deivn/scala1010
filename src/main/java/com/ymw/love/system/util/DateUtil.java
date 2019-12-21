@@ -1444,6 +1444,9 @@ public class DateUtil {
         return cal.getTime();
     }
 
+    
+   
+    
     /**
      * 最近三天日期
      * @return
@@ -1462,22 +1465,25 @@ public class DateUtil {
         return dateMap;
     }
 
+    
+    /**
+     * 离24小时还剩余多少秒
+     * @param args
+     */
+    public static long todaySurplus24() {
+    	Date date=getDayEndTime(new Date());
+       return  (date.getTime()-new Date().getTime())/1000;
+    }
+    
+    
 	
 	public static void main(String[] args) {
+		System.out.println(todaySurplus24());
+		
 //        System.out.println(currentDateAfter(-1));
 //		System.out.println(parseDateToStr(daysAfter8Clock(2), DATE_TIME_FORMAT_HH_MM_SS_MM_DD_YYYY));
 //		System.out.println(somedayStartEnd(0));
-        Map<String, Map<String, Date>> threeDays = latestThreeDays();
-        Iterator<Map.Entry<String, Map<String, Date>>> iterator =threeDays.entrySet().iterator();
-//        String key1 = iterator.next().getKey();
-        while(iterator.hasNext()){
-            Map.Entry<String, Map<String, Date>> next = iterator.next();
-            Iterator<Map.Entry<String, Date>> iter = next.getValue().entrySet().iterator();
-            while(iter.hasNext()){
-                Map.Entry<String, Date> next2 = iter.next();
-                System.out.println("key1: "+next.getKey()+" key2: "+next2.getKey()+" value: "+parseDateToStr(next2.getValue(), DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
-            }
-        }
+
 //        System.out.println(parseDateToStr(new Date(), DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
 //		System.out.println(parseDateToStr(dateToISODate(),DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS) );
 //		System.out.println(currentDateBefore(1));

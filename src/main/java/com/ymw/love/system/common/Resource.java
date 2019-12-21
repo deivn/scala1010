@@ -69,6 +69,11 @@ public interface Resource {
     	 * 判断是否禁用24小时
     	 */
     	String user_forbidden_24="user24";
+        
+    	/**
+    	 * 每天设置加群或者好友次数
+    	 */
+        String user_crowd_friend="CrowdFriend";
     }
 	
     /**
