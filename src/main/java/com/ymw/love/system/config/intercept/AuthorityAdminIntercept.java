@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -36,7 +37,7 @@ public class AuthorityAdminIntercept implements HandlerInterceptor {
 	
 	@Autowired
 	private SysAdminSender sysAdminSender;
-
+	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
@@ -45,7 +46,10 @@ public class AuthorityAdminIntercept implements HandlerInterceptor {
 			HandlerMethod handlerMethod = (HandlerMethod) handler;
 			Method method = handlerMethod.getMethod();
 			Authority authority = method.getAnnotation(Authority.class);
-			String key = request.getRequestURI();
+			//String key  = request.getRequestURI();
+			String key  =	request.getServletPath();
+			//String contextPath= request.getContextPath();
+			
 			if (StringUtils.isEmpty(authority) || !authority.holdUp()) {
 				return true;
 			} else {

@@ -30,7 +30,9 @@ public class EntityUtils {
      */
     public  Map<String, Object> entityToMapNotNull(Object object) {
         Map<String, Object> map = new HashMap<String, Object>();
-        for (Field field : object.getClass().getDeclaredFields()){
+        Class clazz = object.getClass();
+        while (clazz != null){
+        for (Field field : clazz.getDeclaredFields()){
             try {
                 boolean flag = field.isAccessible();
                 field.setAccessible(true);
@@ -43,6 +45,9 @@ public class EntityUtils {
                 e.printStackTrace();
             }
         }
+        //方法获取当前类的父类
+        clazz = clazz.getSuperclass();
+        }
         return map;
     }
     /**
@@ -52,7 +57,10 @@ public class EntityUtils {
      */
     public  Map<String, Object> entityToMap(Object object) {
         Map<String, Object> map = new HashMap<String, Object>();
-        for (Field field : object.getClass().getDeclaredFields()){
+        Class clazz = object.getClass();
+        while (clazz != null){
+        	
+        for (Field field : clazz.getDeclaredFields()){
             try {
                 boolean flag = field.isAccessible();
                 field.setAccessible(true);
@@ -62,6 +70,9 @@ public class EntityUtils {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        //方法获取当前类的父类
+        clazz = clazz.getSuperclass();
         }
         return map;
     }
