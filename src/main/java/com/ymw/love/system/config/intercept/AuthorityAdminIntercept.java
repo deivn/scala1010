@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ymw.love.system.common.SystemEnum;
@@ -47,15 +48,24 @@ public class AuthorityAdminIntercept implements HandlerInterceptor {
 			Method method = handlerMethod.getMethod();
 			Authority authority = method.getAnnotation(Authority.class);
 			//String key  = request.getRequestURI();
-			String key  =	request.getServletPath();
+			String url  =	request.getServletPath();
 			//String contextPath= request.getContextPath();
 			
 			if (StringUtils.isEmpty(authority) || !authority.holdUp()) {
 				return true;
 			} else {
+				
+				//使用@pathVariable
+				if(authority.pathVariable()) {
+					 Map<String, Object> maps =  (Map<String, Object>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+					    for (String keys : maps.keySet()) {
+					    	url=url.replace("/"+maps.get(keys).toString(), "/*");
+						}
+				}
+				
 				// 验证用户权限
 				Map<String, String> map = userLogInInfo.getAdminUser().getAuthoriUrl();
-				if (!map.containsKey(key)) {
+				if (!map.containsKey(url)) {
 					throw new MissRequiredParamException( SystemEnum.NO_AUTHORITY, HintTitle.System.no_authority_error);
 				}	
 				

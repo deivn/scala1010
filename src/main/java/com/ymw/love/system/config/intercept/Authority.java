@@ -36,4 +36,10 @@ public @interface Authority {
 	 * @return
 	 */
 	boolean sign() default false;
+	
+	/**
+	 * 是否使用 PathVariable  默认false：不使用，true使用
+	 * @return
+	 */
+	boolean pathVariable() default false;
 }
