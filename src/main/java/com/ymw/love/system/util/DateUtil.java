@@ -1440,7 +1440,7 @@ public class DateUtil {
     public static Date iSODateToDate(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY)-8);
+        cal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY)+8);
         return cal.getTime();
     }
 
@@ -1468,7 +1468,7 @@ public class DateUtil {
     
     /**
      * 离24小时还剩余多少秒
-     * @param args
+     * @param
      */
     public static long todaySurplus24() {
     	Date date=getDayEndTime(new Date());
