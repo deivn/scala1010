@@ -37,4 +37,9 @@ public interface CommonConstantMqQueue {
 	 */
 	public String TOWN_WALKING_ENERGY_EXPIRED = "town.walking.enegry.expired";
 
+	/**
+	 * 每日签到，24小时过期
+	 */
+	public String TOWN_SIGN_ENERGY_EXPIRED = "town.sign.enegry.expired";
+
 }

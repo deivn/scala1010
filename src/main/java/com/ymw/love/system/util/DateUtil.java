@@ -1478,7 +1478,7 @@ public class DateUtil {
     
 	
 	public static void main(String[] args) {
-		System.out.println(todaySurplus24());
+		System.out.println(currentDateAfterDays(1));
 		
 //        System.out.println(currentDateAfter(-1));
 //		System.out.println(parseDateToStr(daysAfter8Clock(2), DATE_TIME_FORMAT_HH_MM_SS_MM_DD_YYYY));
