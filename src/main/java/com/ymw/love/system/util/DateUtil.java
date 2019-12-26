@@ -1,6 +1,7 @@
 package com.ymw.love.system.util;
 
 import com.ymw.love.system.config.excep.MissRequiredParamException;
+import io.netty.util.internal.StringUtil;
 
 
 import java.sql.Timestamp;
@@ -1426,23 +1427,27 @@ public class DateUtil {
         return cal.getTime();
     }
 
-    /**
-     * Date时间转mongoDB的ISODate
-     * @return
-     */
-    public static Date dateToISODate(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY)+8);
-        return cal.getTime();
-    }
+	public static Date iSODateToDate(Date date) {
+//		if(!time.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z")){
+//			return null;
+//		}
+//		time=time.replaceFirst("T", " ").replaceFirst(".\\d{3}Z", "");
+//		Date date = parseStrToDate(time, DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS);
+//		// 1、取得本地时间：
+//		Calendar cal = Calendar.getInstance();
+//		cal.setTime(date);
+//
+//		// 2、取得时间偏移量：
+//		int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
+//		// 3、取得夏令时差：
+//		int dstOffset = cal.get(Calendar.DST_OFFSET);
+//		// 4、从本地时间里扣除这些差量，即可以取得UTC时间：
+//		cal.add(Calendar.MILLISECOND, (zoneOffset + dstOffset));
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY)-8);
+		return cal.getTime();
+	}
 
-    public static Date iSODateToDate(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY)-8);
-        return cal.getTime();
-    }
 
     
    
@@ -1478,11 +1483,11 @@ public class DateUtil {
     
 	
 	public static void main(String[] args) {
-		System.out.println(currentDateAfterDays(1));
+//		System.out.println(currentDateAfterDays(1));
 		
 //        System.out.println(currentDateAfter(-1));
 //		System.out.println(parseDateToStr(daysAfter8Clock(2), DATE_TIME_FORMAT_HH_MM_SS_MM_DD_YYYY));
-//		System.out.println(somedayStartEnd(0));
+		System.out.println(somedayStartEndDate(new Date(),0));
 
 //        System.out.println(parseDateToStr(new Date(), DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
 //		System.out.println(parseDateToStr(dateToISODate(),DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS) );
