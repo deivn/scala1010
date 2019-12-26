@@ -1433,7 +1433,7 @@ public class DateUtil {
     public static Date dateToISODate(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY)+8);
+        cal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY)-8);
         return cal.getTime();
     }
 
