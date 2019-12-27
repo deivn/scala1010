@@ -7,11 +7,14 @@ package com.ymw.love.system.config;
  */
 public class Constant {
 
-    //下架
+    //待发布
     public static final Integer BASE_CANCEL_STATE = 1;
 
     //上架
     public static final Integer BASE_ACTIVE_STATE = 2;
+
+    //下架
+    public static final Integer BASE_STOP_STATE = 3;
 
 
     public static final Integer GOODS_FINDTYPE_CATEGORY = 0;
@@ -42,7 +45,7 @@ public class Constant {
 
     public static final String ENDDATE_INVALID = "结束时间不能小于起始时间!";
 
-    public static final String GOODS_INFO_EMPTY = "该商品已下架";
+    public static final String GOODS_INFO_EMPTY = "该商品不存在";
 
     public static final String BANNER_INFO_EMPTY = "Banner不存在";
 
