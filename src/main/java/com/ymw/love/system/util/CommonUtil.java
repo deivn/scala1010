@@ -278,6 +278,16 @@ public class CommonUtil {
         return num.toString();
     }
 
+    public static String supplyEnergyByRegex(String content, String rex){
+        Pattern pattern = Pattern.compile("\\d+" );
+        Matcher matcher = pattern.matcher(content);
+        String result = "";
+        if (matcher.find()) {
+            result = matcher.group(0);
+        }
+        return result;
+    }
+
     public static void main(String[]args){
         System.out.println(genRandoFloatFromRange(1000.00f, 1000.00f, 2));
 
