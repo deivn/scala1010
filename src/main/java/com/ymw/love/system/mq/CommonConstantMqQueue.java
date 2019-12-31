@@ -30,7 +30,7 @@ public interface CommonConstantMqQueue {
 	/**
 	 * 消息推送
 	 */
-	public String MESSAGE_PUSH = "message.push.a";
+	public String MESSAGE_PUSH = "message.push";
 
 	/**
 	 * 走路获取能量过期，往后2天8点
