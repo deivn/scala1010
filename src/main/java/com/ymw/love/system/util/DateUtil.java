@@ -22,6 +22,8 @@ public class DateUtil {
 
 	public static final String DATE_FORMAT_MM = "MM";
 
+	public static final String DATE_FORMAT_DD = "dd";
+
 //	年月
 	public static final String DATE_FORMAT_YYYYMM = "yyyyMM";
 
