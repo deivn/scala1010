@@ -89,5 +89,10 @@ public interface HintTitle {
 		 */
 		String  img_format_error="图片格式错误";
 		
+		/**
+		 * 微信授权失败
+		 */
+		String wei_xin_error="微信授权失败，请重新再授权";
+		
 	}
 }

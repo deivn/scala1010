@@ -28,8 +28,10 @@ public interface SystemEnum {
 	 * 失败 账号或者密码错误
 	 */
 	Integer FAIL_USER_PASSWORD_ERROR= 101;
-	
-	
+	/**
+	 * 通过微信授权后， 用户尚未注册  102
+	 */
+	Integer FAIL_USER_WEIXIN_NO_LOGIN= 102;
 	
 	/**
 	 * token 失效

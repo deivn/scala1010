@@ -97,7 +97,12 @@ public interface Resource {
 		/**
 		 * 助力验证码
 		 */
-	    SICK_AID(4,"sick_aid_")
+	    SICK_AID(4,"sick_aid_"),
+	    
+	    /**
+		 * 微信验证码
+		 */
+	    WEI_XIN(5,"wei_xin_")
 		;
 		
 		
