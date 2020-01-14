@@ -5,6 +5,8 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 public class TaskSender {
 
@@ -25,4 +27,5 @@ public class TaskSender {
 	public void townNewTask(TownTask arg) {
 		rabbitTemplate.convertAndSend(CommonConstantMqQueue.TOWN_NEW_TASK,arg);	
 	}
+
 }

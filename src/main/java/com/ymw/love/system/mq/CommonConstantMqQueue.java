@@ -42,4 +42,9 @@ public interface CommonConstantMqQueue {
 	 */
 	public String TOWN_SIGN_ENERGY_EXPIRED = "town.sign.enegry.expired";
 
+	/**
+	 * 能量过期消息推送，每天用户首次打开APP推送一次
+	 */
+	public String ENERGY_EXPIRED_SIGNAL = "energy.expired.signal";
+
 }
