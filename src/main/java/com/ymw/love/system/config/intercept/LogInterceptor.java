@@ -34,7 +34,7 @@ public class LogInterceptor implements HandlerInterceptor{
 		    // log.info("方法---------------------》" + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
 	        Date date = new Date();
 	         long  mi=   System.currentTimeMillis();
-	         log.info("开始时间:"+ (new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date))+"  URL:" + request.getRequestURL().toString()+" 标注号:"+mi +" IP:"+getIPAddress(request));
+	         log.info("开始时间:"+ (new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date))+"  URL:" + request.getRequestURL().toString()+" 标注号:"+mi +" IP:"+getIPAddress(request)+" 终端:"+request.getHeader("SIGN")+" 版本:"+request.getHeader("version"));
             request.setAttribute("dateS", date.getTime());
             request.setAttribute("dateSmi", mi);
 	        
