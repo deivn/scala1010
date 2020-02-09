@@ -102,8 +102,12 @@ public interface Resource {
 	    /**
 		 * 微信验证码
 		 */
-	    WEI_XIN(5,"wei_xin_")
-		;
+	    WEI_XIN(5,"wei_xin_"),
+	    
+	    /**
+	     * 注册或者登陆
+	     */
+	    LOG_IN_ENROL(6,"logIn_enroll_");
 		
 		
 		@Getter
