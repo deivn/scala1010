@@ -938,6 +938,17 @@ public class DateUtil {
 	}
 
 	/**
+	 * 转换UNIX 时间戳
+	 * @param timestampString
+	 * @return
+	 */
+	public static String TimeStamp2Date(String timestampString) {
+		Long timestamp = Long.parseLong(timestampString) * 1000;
+		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).format(new Date(timestamp));
+		return date;
+	}
+
+	/**
 	 * 两个时间之间相差距离多少天
 	 * 
 	 * @param str1 时间参数 1：
