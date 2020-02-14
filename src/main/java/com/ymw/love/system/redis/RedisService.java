@@ -3,6 +3,7 @@ package com.ymw.love.system.redis;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -189,6 +190,14 @@ public class RedisService<T> {
             if (StringUtils.isNotEmpty(currentValue) && currentValue.equals(value)) {
                 redisTemplate.opsForValue().getOperations().delete(key);
             }
+    }
+    
+    /**
+     * 获取一个list队列
+     * @return
+     */
+    public ListOperations<String, Object>  getListQueue() {
+    	return redisTemplate.opsForList();
     }
     
 }
