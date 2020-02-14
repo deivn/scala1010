@@ -113,4 +113,15 @@ public class TecentCloudUtils {
         String url = API_ADDRESS + "?appid=" + APPID + params;
         return url;
     }
+
+    /**
+     * 检验API回调地址是否来自腾讯后台
+     * @param t 时间戳
+     * @param sign 签名
+     * @return
+     */
+    public static boolean checkSignature(Long t,String sign){
+        String signature = MD5.string2MD5(new StringBuffer().append(API_KEY).append(t).toString());
+        return signature.equals(sign);
+    }
 }
