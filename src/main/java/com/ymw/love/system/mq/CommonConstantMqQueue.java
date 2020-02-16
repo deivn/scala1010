@@ -46,5 +46,10 @@ public interface CommonConstantMqQueue {
 	 * 能量过期消息推送，每天用户首次打开APP推送一次
 	 */
 	public String ENERGY_EXPIRED_SIGNAL = "energy.expired.signal";
+	
+	/**
+	 * 抢红包能量（新用户注册）
+	 */
+	public String REGISTER_MOVE_ENERGY="register.move.energy";
 
 }
