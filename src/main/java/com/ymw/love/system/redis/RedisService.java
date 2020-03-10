@@ -1,5 +1,6 @@
 package com.ymw.love.system.redis;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,5 +200,25 @@ public class RedisService<T> {
     public ListOperations<String, Object>  getListQueue() {
     	return redisTemplate.opsForList();
     }
-    
+
+
+    public void hset(String key, String item, Object value) {
+        redisTemplate.opsForHash().put(key, item, value);
+    }
+
+    public Object hget(String key, String item) {
+        return redisTemplate.opsForHash().get(key, item);
+    }
+
+    public Map<Object, Object> hmget(String key) {
+        return redisTemplate.opsForHash().entries(key);
+    }
+
+    public void hdel(String key, Object... item) {
+        redisTemplate.opsForHash().delete(key, item);
+    }
+
+    public boolean hHasKey(String key, String item) {
+        return redisTemplate.opsForHash().hasKey(key, item);
+    }
 }
