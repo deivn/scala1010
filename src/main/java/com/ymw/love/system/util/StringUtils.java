@@ -752,17 +752,8 @@ public class StringUtils {
 
 
     public static String replaceNameX(String str){
-        StringBuffer sb = new StringBuffer();
-        Pattern p = Pattern.compile(STR_REG);
-        Matcher m = p.matcher(str);
-        int i = 0;
-        while(m.find()){
-            i++;
-            if(i==1)
-                continue;
-            m.appendReplacement(sb, "*");
-        }
-        m.appendTail(sb);
+        StringBuffer sb = new StringBuffer(str.trim());
+        sb.replace(1,sb.length(),"**");
         return sb.toString();
     }
 }
