@@ -93,6 +93,10 @@ public interface HintTitle {
 		 * 微信授权失败
 		 */
 		String wei_xin_error="微信授权失败，请重新再授权";
+		/**
+		 * 请勿重复提交
+		 */
+		String no_repeat="请勿重复提交";
 		
 	}
 }
