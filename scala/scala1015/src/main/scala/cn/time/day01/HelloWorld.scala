@@ -6,8 +6,9 @@ object HelloWorld {
     println("hello world")
 
     //aaaa
-
-    //bbb
+    var a = 10
+    var cc = 20
+    //ieowoowoowowoow
   }
 
 }
