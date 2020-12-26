@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.sys.SysLogMapper">
+
+  
+
+
+
+<select id="findList" parameterType="com.ymw.love.system.dto.BasicDTO"  resultType="java.util.Map">
+   SELECT slog.creates_time as createsTime  ,slog.action_describe as `describe` ,au.`name`,au.user_name as  userName FROM sys_log as slog INNER JOIN a_user as au ON au.id=slog.auser_id
+    <where>  
+        1=1
+       <if test="arg.startTime !=null and arg.startTime !='' ">
+        and   slog.creates_time &gt;= #{arg.startTime}
+       </if>
+       <if test="arg.closeTime !=null and arg.closeTime !='' ">
+       and slog.creates_time  &lt;= #{arg.closeTime}
+       </if>
+       
+       <if test=" arg.name !=null   and arg.name !=''">
+        and au.name LIKE concat('%',#{arg.name},'%') or au.user_name LIKE concat('%',#{arg.name},'%')
+       </if>
+       order by  slog.creates_time  DESC
+     </where>
+</select>
+
+
+
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.advisory.AdvisoryCommentMapper">
+
+    <select id="findAdvisoryCommentList" resultType="java.util.Map">
+        select c.id,c.comment_content AS commentContent,c.parent_id AS parentId,
+        (SELECT COUNT(id) FROM u_advisory_comment_give WHERE c.id=comment_id
+        <if test="userId !=null and userId !=''">
+            and user_id=#{userId}
+        </if>
+        ) AS commentGiveStatus,
+        (SELECT COUNT(id) FROM u_advisory_comment_give WHERE c.id=comment_id) AS commentGiveCount,
+        DATE_FORMAT(c.add_time,'%Y-%m-%d') as addTime,u.nick_name AS nickName,u.image_url as imageUrl,c.user_id as
+        userId
+        from u_advisory_comment as c
+        LEFT JOIN u_user as u ON c.user_id=u.id
+        WHERE c.status=1 AND c.parent_id is null and c.advisory_id=#{id}
+    </select>
+
+    <select id="findAdvisoryCommentDetails" resultType="java.util.Map">
+        select c.id,c.comment_content AS commentContent,c.parent_id AS parentId,
+        DATE_FORMAT(c.add_time,'%Y-%m-%d') as addTime,u.nick_name AS nickName,u.image_url as imageUrl,c.user_id as
+        userId,
+        (SELECT COUNT(id) FROM u_advisory_comment_give WHERE c.id=comment_id
+        <if test="userId !=null and userId !=''">
+            and user_id=#{userId}
+        </if>
+        ) AS commentGiveStatus,
+        (SELECT COUNT(id) FROM u_advisory_comment_give WHERE c.id=comment_id) AS commentGiveCount
+        from u_advisory_comment as c
+        LEFT JOIN u_user as u ON c.user_id=u.id
+        WHERE c.status=1 AND c.parent_id is null and c.id=#{id}
+    </select>
+
+</mapper>

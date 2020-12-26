@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+  
+  <property name="LOG_FILE" value="house"/>
+
+    <!-- 控制台输出 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+			<pattern>%date %-5p [%t] %c:%M:%L - %m%n</pattern>
+		</encoder>
+    </appender>
+    
+     <appender name="logOutput" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		
+		<File>logs/${LOG_FILE}.log</File>
+		<!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+			<FileNamePattern>logs/${LOG_FILE}.%d{yyyy-MM-dd}.log</FileNamePattern>
+			<!--只保留最近90天的日志-->
+			<maxHistory>10</maxHistory>
+			<!--用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志-->
+			<totalSizeCap>10MB</totalSizeCap>
+		</rollingPolicy>
+		<!--日志输出编码格式化-->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d [%thread] %-5level %logger{36} %line - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+
+  <appender name="logError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>Error</level>
+		</filter>
+		<File>logs/${LOG_FILE}-Error.log</File>
+		<!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+			<FileNamePattern>logs/${LOG_FILE}-Error.%d{yyyy-MM-dd}.log</FileNamePattern>
+			<!--只保留最近90天的日志-->
+			<maxHistory>10</maxHistory>
+			<!--用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志-->
+			<totalSizeCap>10MB</totalSizeCap>
+		</rollingPolicy>
+		<!--日志输出编码格式化-->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d [%thread] %-5level %logger{36} %line - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+  <logger name="com.zaxxer.hikari" level="debug" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+
+   <logger name="com.ymw.love.system"  >
+		<appender-ref ref="logOutput" />
+		<appender-ref ref="logError" />
+	</logger>
+
+    <root level="INFO">
+    <appender-ref ref="console"/>
+     <appender-ref ref="logOutput" />
+    </root>
+
+
+</configuration>

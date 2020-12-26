@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.sys.SysAuthorityMapper">
+
+
+
+ <resultMap id="Authority_Map_all" type="com.ymw.love.system.vo.AuthorityVO" >
+   <collection property="data" ofType="com.ymw.love.system.vo.AuthorityVO"
+    column="{id=id,roleCode=roleCode}" select="findALL" >
+    </collection>
+  </resultMap>
+
+    <select id="findALL"  resultMap="Authority_Map_all">
+       SELECT aut.id, aut.title,aut.`code`,aut.menu_type,aut.father_id ,@roleCode:='${roleCode}' as  roleCode
+       
+       <if test="roleCode!=null and roleCode!='All'">
+        , sra.authority_code as optionCode 
+       </if>
+       
+       FROM `sys_authority` as aut
+       
+       <if test="roleCode !=null  and roleCode!='All' ">
+         LEFT JOIN sys_role_authority  as sra  on sra.authority_code=aut.`code` and sra.role_code=#{roleCode}
+       </if>
+       
+       <where>
+        aut.state=2 and aut.sign=2 
+        <if test="id ==null">
+         and aut.father_id is  null 
+        </if>
+
+        <if test="id !=null">
+        and aut.`father_id`=#{id}
+        </if>
+           
+        ORDER BY aut.sort desc
+        
+        </where>
+       
+    </select>
+
+
+
+
+
+	
+
+</mapper>

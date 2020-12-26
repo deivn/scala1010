@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.seeDoctor.SeeDoctorQueryResultMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.ymw.love.system.entity.seeDoctor.query.SeeDoctorQueryResult">
+		<result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+		<result column="option_status" property="optionStatus" jdbcType="INTEGER"/>
+		<result column="patient_name" property="patientName" jdbcType="VARCHAR"/>
+		<result column="treatment_date" property="treatmentDate" jdbcType="VARCHAR"/>
+		<result column="weekday" property="weekday" jdbcType="INTEGER"/>
+		<result column="day_half_status" property="dayHalfStatus" jdbcType="INTEGER"/>
+		<result column="take_password" property="takePassword" jdbcType="VARCHAR"/>
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+		<result column="title" property="title" jdbcType="VARCHAR"/>
+		<result column="site" property="site" jdbcType="VARCHAR"/>
+		<result column="phone" property="phone" jdbcType="VARCHAR"/>
+		<result column="additional_actions" property="additionalActions" jdbcType="VARCHAR"/>
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+        a.order_id, a.option_status, a.patient_name, a.treatment_date, a.weekday, a.day_half_status, a.take_password, b.image_url, b.title, b.site, b.phone,
+        CASE  WHEN a.option_status=1 and a.treatment_date &gt; date_format(now(),'%Y-%m-%d') THEN '2'
+		WHEN a.option_status=1 THEN '4'
+		ELSE '' end as additional_actions
+    </sql>
+
+
+	<select id="findRecordsByUid" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM (
+		SELECT order_id, hospital_id, option_status, patient_name, treatment_date
+		, weekday, day_half_status, take_password
+		FROM u_see_doctor
+		<where>
+			<if test="uid != null and uid != ''">
+				user_id = #{uid}
+			</if>
+		</where>
+		) a
+		INNER JOIN u_hospital b ON a.hospital_id = b.id
+		order by a.treatment_date desc
+	</select>
+
+	<select id="findRecordsByType" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM (
+		SELECT order_id, hospital_id, option_status, patient_name, treatment_date
+		, weekday, day_half_status, take_password
+		FROM u_see_doctor
+		<where>
+			<if test="uid != null and uid != ''">
+				user_id = #{uid}
+			</if>
+			<if test="type != null and type != 0">
+				and option_status = #{type}
+			</if>
+		</where>
+		) a
+		INNER JOIN u_hospital b ON a.hospital_id = b.id
+		order by a.treatment_date desc
+	</select>
+
+
+</mapper>

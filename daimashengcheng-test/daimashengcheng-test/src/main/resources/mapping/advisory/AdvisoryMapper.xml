@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.advisory.AdvisoryMapper">
+
+    <select id="findDetails" resultType="java.util.Map"
+            parameterType="com.ymw.love.system.entity.advisory.NewsAdvisoryEntity">
+        select a.id,a.news_title AS newsTitle,a.news_img AS newsImg,DATE_FORMAT(a.add_time,'%Y-%m-%d') AS
+        addTime,a.browse_count AS browseCount,a.author,a.news_describe as newsDescribe
+        ,(SELECT COUNT(id) FROM u_advisory_comment WHERE a.id=advisory_id) AS replyCount
+        ,(SELECT COUNT(id) FROM u_advisory_collect WHERE a.id=advisory_id
+        <if test="userId !=null and userId !=''">
+           and  user_id=#{userId}
+        </if>
+        ) AS collectStatus
+        ,(SELECT COUNT(id) FROM u_advisory_give WHERE a.id=advisory_id
+        <if test="userId !=null and userId !=''">
+            and  user_id=#{userId}
+        </if>
+        ) AS advisoryGiveStatus
+        ,(SELECT COUNT(id) FROM u_advisory_collect WHERE a.id=advisory_id) AS collectCount
+        from u_news_advisory as a
+        <where>
+            <if test="id !=null">
+                and a.id=#{id}
+            </if>
+        </where>
+    </select>
+
+    <!--<select id="selectPages" resultType="com.ymw.love.system.entity.advisory.NewsAdvisoryEntity" parameterType="com.ymw.love.system.entity.advisory.NewsAdvisoryEntity">-->
+        <!--select  u.id,u.news_title as newsTitle,u.news_describe as newsDescribe,u.news_img as newsImg,u.browse_count as browseCount-->
+        <!--,(select count(id) from u_advisory_comment where u.id=advisory_id) as replyCount,u.author-->
+        <!--from u_news_advisory as u-->
+        <!--<where>-->
+            <!--and u.audit_status=2-->
+            <!--<if test="advisoryEntity.newsTitle !=null and advisoryEntity.newsTitle!=''">-->
+                <!--and u.news_title like CONCAT('%'#{advisoryEntity.newsTitle}'%')-->
+            <!--</if>-->
+            <!--<if test="advisoryEntity.typeName !=null and advisoryEntity.typeName!=''">-->
+                <!--and u.type_name like CONCAT('%'#{advisoryEntity.typeName}'%')-->
+            <!--</if>-->
+        <!--</where>-->
+        <!--ORDER BY u.recommend_status desc,u.add_time DESC-->
+    <!--</select>-->
+
+
+    <select id="findSysAdvisoryAuditList" resultType="com.ymw.love.system.entity.advisory.NewsAdvisoryEntity" parameterType="com.ymw.love.system.entity.advisory.NewsAdvisoryEntity">
+         select id,news_title as  newsTitle,type_name as typeName,author,add_time as addTime,recommend_status as recommendStatus,user_id as userId,auditor,
+         audit_time as auditTime,browse_count as browseCount,news_img as newsImg,cover_img as coverImg,news_describe as newsDescribe,audit_reason as auditReason,
+         author as author
+         from  u_news_advisory
+        <where>
+            <if test="advisoryEntity.str !=null and advisoryEntity.str !=''">
+                (id=#{advisoryEntity.str} or news_title like CONCAT(CONCAT('%', #{advisoryEntity.str}), '%') or author like CONCAT(CONCAT('%', #{advisoryEntity.str}), '%'))
+            </if>
+            <if test="advisoryEntity.beginTime !=null and advisoryEntity.beginTime !=''">
+                and audit_time &gt;=#{advisoryEntity.beginTime}
+            </if>
+            <if test="advisoryEntity.endTime !=null and advisoryEntity.endTime !=''">
+                and audit_time &lt;=#{advisoryEntity.endTime}
+            </if>
+            <if test="advisoryEntity.id !=null and advisoryEntity.id !=''">
+                and id =#{advisoryEntity.id}
+            </if>
+            <if test="advisoryEntity.day ==3">
+                and datediff(now(),audit_time) &lt;=3
+            </if>
+            <if test="advisoryEntity.day ==7">
+                and datediff(now(),audit_time) &lt;=7
+            </if>
+            <if test="advisoryEntity.day ==2">
+                and datediff(now(),audit_time) =1
+            </if>
+            <if test="advisoryEntity.day ==4">
+                and datediff(now(),audit_time) =0
+            </if>
+            <if test="advisoryEntity.day ==1">
+                and DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= date(audit_time)
+            </if>
+            <if test="advisoryEntity.auditStatus !=null">
+                and audit_status=#{advisoryEntity.auditStatus}
+            </if>
+        </where>
+        order by audit_time desc
+    </select>
+    <select id="findSysAdvisoryConsultingList" resultType="com.ymw.love.system.entity.advisory.NewsAdvisoryEntity" parameterType="com.ymw.love.system.entity.advisory.NewsAdvisoryEntity">
+        select id,news_title as  newsTitle,type_name as typeName,author,add_time as addTime,recommend_status as recommendStatus,user_id as userId,auditor,
+        audit_time as auditTime,browse_count as browseCount,news_img as newsImg,cover_img as coverImg,news_describe as newsDescribe,audit_reason as auditReason,
+        author as author
+        from  u_news_advisory
+        <where>
+            <if test="advisoryEntity.str !=null and advisoryEntity.str !=''">
+                (id=#{advisoryEntity.str} or news_title like CONCAT(CONCAT('%', #{advisoryEntity.str}), '%') or author like CONCAT(CONCAT('%', #{advisoryEntity.str}), '%'))
+            </if>
+            <if test="advisoryEntity.beginTime !=null and advisoryEntity.beginTime !=''">
+                and add_time &gt;=#{advisoryEntity.beginTime}
+            </if>
+            <if test="advisoryEntity.endTime !=null and advisoryEntity.endTime !=''">
+                and add_time &lt;=#{advisoryEntity.endTime}
+            </if>
+            <if test="advisoryEntity.id !=null and advisoryEntity.id !=''">
+                and id =#{advisoryEntity.id}
+            </if>
+            <if test="advisoryEntity.day ==3">
+                and datediff(now(),add_time) &lt;=3
+            </if>
+            <if test="advisoryEntity.day ==7">
+                and datediff(now(),add_time) &lt;=7
+            </if>
+            <if test="advisoryEntity.day ==2">
+                and datediff(now(),add_time) =1
+            </if>
+            <if test="advisoryEntity.day ==4">
+                and datediff(now(),add_time) =0
+            </if>
+            <if test="advisoryEntity.day ==1">
+                and DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= date(add_time)
+            </if>
+            <if test="advisoryEntity.auditStatus !=null">
+                and audit_status=#{advisoryEntity.auditStatus}
+            </if>
+        </where>
+        order by add_time desc
+    </select>
+
+    <select id="findAdvisoryRefusedList" resultType="com.ymw.love.system.entity.advisory.NewsAdvisoryEntity" parameterType="com.ymw.love.system.entity.advisory.NewsAdvisoryEntity">
+        select id,news_title as  newsTitle,type_name as typeName,author,add_time as addTime,recommend_status as recommendStatus,user_id as userId,auditor,
+        audit_time as auditTime,cover_img as coverImg,audit_reason as auditReason
+        from  u_news_advisory
+        where  audit_status=3
+        order by add_time desc
+    </select>
+
+
+    <update id="updateSysAdvisoryAudit">
+        update u_news_advisory
+        <set >
+            <if test="auditReason != null and auditReason !=''">
+                audit_reason = #{auditReason},
+            </if>
+            <if test="auditStatus != null and auditStatus !=''">
+                audit_status = #{auditStatus},
+            </if>
+            <if test="author != null and author !=''">
+                author = #{author},
+            </if>
+                audit_time = now(),
+        </set>
+        where id IN
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </update>
+
+
+    <select id="findAdvisoryCommentsList" resultType="com.ymw.love.system.entity.advisory.AdvisoryCommentEntity" parameterType="com.ymw.love.system.entity.advisory.AdvisoryCommentEntity">
+        select n.id,n.comment_content as commentContent,n.add_time as addTime,u.name
+        from  u_advisory_comment as n
+        left join u_user as u on  n.user_id=u.id
+        <where>
+            <if test="advisoryEntity.beginTime !=null and advisoryEntity.beginTime !=''">
+                and n.add_time &gt;=#{advisoryEntity.beginTime}
+            </if>
+            <if test="advisoryEntity.endTime !=null and advisoryEntity.endTime !=''">
+                and n.add_time &lt;=#{advisoryEntity.endTime}
+            </if>
+            <if test="advisoryEntity.day ==3">
+                and datediff(now(),n.add_time) &lt;=3
+            </if>
+            <if test="advisoryEntity.day ==7">
+                and datediff(now(),n.add_time) &lt;=7
+            </if>
+            <if test="advisoryEntity.day ==2">
+                and datediff(now(),n.add_time) =1
+            </if>
+            <if test="advisoryEntity.day ==4">
+                and datediff(now(),n.add_time) =0
+            </if>
+            <if test="advisoryEntity.day ==1">
+                and DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= date(n.add_time)
+            </if>
+            and n.status=1
+        </where>
+        order by n.add_time desc
+    </select>
+
+
+    <select id="findAdvisoryDraftsList" resultType="com.ymw.love.system.entity.advisory.AdvisoryDraftsEntity" parameterType="com.ymw.love.system.entity.advisory.AdvisoryDraftsEntity">
+        select id,content,author,category,save_time as saveTime,title,recommend_status as recommendStatus,news_img as newsImg,cover_img as coverImg
+        from  u_advisory_drafts
+        <where>
+            <if test="advisoryEntity.id !=null and advisoryEntity.id !=''">
+                and id=#{advisoryEntity.id}
+            </if>
+            <if test="advisoryEntity.beginTime !=null and advisoryEntity.beginTime !=''">
+                and save_time &gt;=#{advisoryEntity.beginTime}
+            </if>
+            <if test="advisoryEntity.endTime !=null and advisoryEntity.endTime !=''">
+                and save_time &lt;=#{advisoryEntity.endTime}
+            </if>
+            <if test="advisoryEntity.day ==3">
+                and datediff(now(),save_time) &lt;=3
+            </if>
+            <if test="advisoryEntity.day ==7">
+                and datediff(now(),save_time) &lt;=7
+            </if>
+            <if test="advisoryEntity.day ==1">
+                and DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= date(save_time)
+            </if>
+        </where>
+        order by save_time desc
+    </select>
+
+</mapper>

@@ -1,0 +1,44 @@
+image: maven:latest
+
+# 本次构建的阶段：build package
+stages:
+- build
+- package
+- deploy
+# 构建 Job
+build:
+  stage: build
+  only:    
+  - test
+  tags:
+  - test
+  script:
+  - echo "=============== 开始编译构建任务 ==============="
+  - mvn compile
+# 打包
+package:
+  stage: package
+  only:    
+  - test
+  tags:
+  - test
+  script:
+  - echo "=============== 开始打包任务  ==============="
+  - mvn package -Dmaven.test.skip=true
+  - mv -f /home/gitlab-runner/builds/6d62e4fe/0/ebuyhouse-cg/distribute-love-system/target/distribute-love-system-0.0.1-SNAPSHOT.jar /opt/distribute-love-system/maven/
+#部署
+deploy:
+  stage: deploy
+  only:    
+  - test
+  tags:
+  - test
+  script:
+  - echo "=============== 开始部署任务  ==============="
+  - echo "=============== 停止服务  ==============="
+  - cd /opt/distribute-love-system/
+  - systemctl stop love-system
+  - mv -f maven/distribute-love-system-0.0.1-SNAPSHOT.jar ./
+  - echo "=============== 启动服务  ==============="
+  - systemctl start love-system
+  - echo "=============== 部署完成  ==============="

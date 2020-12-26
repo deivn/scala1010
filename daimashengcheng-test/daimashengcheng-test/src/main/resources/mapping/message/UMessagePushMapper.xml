@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.message.UMessagePushMapper">
+
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.ymw.love.system.entity.message.UMessagePush">
+		<id column="id" property="id" />
+		<result column="type" property="type" />
+		<result column="title" property="title" />
+		<result column="content" property="content" />
+		<result column="sub_type" property="subType" />
+		<result column="business_id" property="businessId" />
+		<result column="dest_uid" property="destUid" />
+		<result column="is_delete" property="isDelete" />
+		<result column="is_read" property="isRead" />
+		<result column="version" property="version" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+
+	
+	<select id="queryMessagesByUid" resultMap="BaseResultMap">
+		select id, is_read, update_time, title, content, type, sub_type, business_id from u_message_push where is_delete = 1 and dest_uid = #{destUid} order by update_time desc
+	</select>
+
+	<select id="messageUnreadCount" resultType="com.ymw.love.system.entity.message.query.MessageCountQueryResult">
+		select type, count(1) as messageCount from u_message_push where is_delete = 1 and is_read = 1 and dest_uid = #{destUid}  group by type
+	</select>
+
+	<select id="queryMessagesByType" resultMap="BaseResultMap">
+		select id, is_read, update_time, title, content, sub_type, business_id from u_message_push where is_delete = 1 and dest_uid = #{destUid} and type = #{type} order by update_time desc
+	</select>
+
+	<update id="deleteMessagesByIds">
+		update u_message_push
+		<set>
+			is_delete = 2
+			<if test="updateTime != null and updateTime != ''">
+				,update_time = #{updateTime}
+			</if>
+		</set>
+		where dest_uid = #{uid} and
+		id
+		in
+		(
+		<foreach collection="ids" index="index" item="rp" separator=",">
+			#{rp}
+		</foreach>
+		)
+	</update>
+
+	<update id="updateUnreadsByIds">
+		update u_message_push
+		<set>
+			is_read = 2
+			<if test="updateTime != null and updateTime != ''">
+				,update_time = #{updateTime}
+			</if>
+		</set>
+		where dest_uid = #{uid} and
+		is_delete = 1 and id
+		in
+		(
+		<foreach collection="ids" index="index" item="rp" separator=",">
+			#{rp}
+		</foreach>
+		)
+	</update>
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.AUserMapper">
+
+	
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.ymw.love.system.entity.AUser">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="user_name" property="userName" />
+		<result column="phone" property="phone" />
+		<result column="password" property="password" />
+		<result column="position_id" property="positionId" />
+		<result column="department_id" property="departmentId" />
+		<result column="hospital_id" property="hospitalId" />
+		<result column="role_code" property="roleCode" />
+		<result column="state" property="state" />
+		<result column="creates_time" property="createsTime" />
+		<result column="login_time" property="loginTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, user_name AS userName, phone, password, position_id AS positionId, department_id AS departmentId, hospital_id AS hospitalId, role_code AS roleCode, state, creates_time AS createsTime, login_time AS loginTime
+    </sql>
+    
+    <!-- 获取用户列表 -->
+    <select id="findUserList"  resultType="java.util.Map">
+  SELECT au.id, au.name , au.user_name as userName , au.phone, 
+  (SELECT title FROM sys_dict WHERE id=au.position_id) as position,
+  (SELECT title FROM sys_dict WHERE id=au.sector_id) as sector,
+  uh.title as hospital, sr.`name` as role
+  FROM `a_user` as au  LEFT JOIN  u_hospital as uh on uh.id=au.hospital_id LEFT JOIN sys_role as sr on sr.code=au.role_code
+   <where>
+    au.state=1
+    <if test="name !=null">
+    and au.user_name LIKE CONCAT('%',#{name},'%') or au.phone LIKE CONCAT('%',#{name},'%')
+    </if>
+   
+   <if test="hospitalId !=null ">
+    and au.hospital_id=#{hospitalId}
+   </if>
+    
+   
+   </where>
+   
+    </select>
+    
+    
+    
+    
+    
+    
+
+</mapper>

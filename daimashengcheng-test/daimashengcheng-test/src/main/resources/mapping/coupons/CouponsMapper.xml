@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.coupon.InvitationCodeMapper">
+
+    <insert id="addSalvationCoupons" parameterType="com.ymw.love.system.entity.coupon.CouponsEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into u_coupons
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="couponsType != null">
+                coupons_type,
+            </if>
+            <if test="couponsStatus != null">
+                coupons_status,
+            </if>
+            <if test="money != null">
+                money,
+            </if>
+            <if test="salvationId != null">
+                salvation_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="addTime != null">
+                add_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="couponsType != null">
+                #{couponsType},
+            </if>
+            <if test="couponsStatus != null">
+                #{couponsStatus},
+            </if>
+            <if test="money != null">
+                #{money},
+            </if>
+            <if test="salvationId != null">
+                #{salvationId},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+        </trim>
+    </insert>
+    <select id="findCouponsList" resultType="com.ymw.love.system.entity.coupon.CouponsEntity">
+      SELECT id,coupons_type AS couponsType,coupons_status AS couponsStatus,money
+        FROM u_coupons
+        where user_id=#{couponsEntity.userId}
+        ORDER BY coupons_type ASC,coupons_status ASC
+
+    </select>
+    <select id="findLoveCouponsList" resultType="com.ymw.love.system.entity.coupon.CouponsEntity">
+         SELECT c.id,c.add_time as addTime,c.money,u.phone
+        FROM u_coupons as c
+        left join u_user as u on c.user_id=u.id
+        where c.user_id=#{couponsEntity.userId} and c.coupons_type=2
+    </select>
+    <select id="findHxList" resultType="java.util.Map" parameterType="com.ymw.love.system.entity.coupon.CouponsEntity">
+        SELECT
+        c.id,
+        u.`name`,
+        u.phone,
+        c.money,
+        (SELECT treatment_date FROM u_see_doctor WHERE user_id=c.user_id
+        <if test="couponsEntity.optionStatus>0">
+            AND option_status=#{couponsEntity.optionStatus}
+        </if>
+        limit 1
+        ) AS treatmentSate,
+        (SELECT h.title FROM u_see_doctor AS s
+        LEFT JOIN u_hospital AS h ON s.hospital_id=h.id
+        WHERE user_id=c.user_id
+        <if test="couponsEntity.optionStatus>0">
+            AND option_status=#{couponsEntity.optionStatus}
+        </if>
+        limit 1
+        ) AS title,
+        (SELECT day_half_status FROM u_see_doctor WHERE user_id=c.user_id
+        <if test="couponsEntity.optionStatus>0">
+            AND option_status=#{couponsEntity.optionStatus}
+        </if>
+        limit 1
+        ) AS dayHalfStatus,
+        (SELECT patient_name FROM u_see_doctor WHERE user_id=c.user_id
+        <if test="couponsEntity.optionStatus>0">
+            AND option_status=#{couponsEntity.optionStatus}
+        </if>
+        limit 1
+        ) AS patientName,
+        (SELECT patient_phone FROM u_see_doctor WHERE user_id=c.user_id
+        <if test="couponsEntity.optionStatus>0">
+            AND option_status=#{couponsEntity.optionStatus}
+        </if>
+        limit 1
+        ) AS patientPhone,
+        ho.title AS hxBranch,
+        c.hx_person AS hxPerson,
+        c.hx_time AS hxTime
+        FROM
+        u_coupons AS c
+        LEFT JOIN u_user AS u ON c.user_id = u.id
+        LEFT JOIN u_hospital AS ho ON c.hx_branch = ho.id
+        <where>
+            <if test="couponsEntity.couponsType >0">
+                and c.coupons_type=#{couponsEntity.couponsType}
+            </if>
+            <if test="couponsEntity.couponsStatus>0">
+                and c.coupons_status=#{couponsEntity.couponsStatus}
+            </if>
+            <if test="couponsEntity.str !=null and couponsEntity.str !=''">
+                and (u.name like CONCAT(CONCAT('%', #{couponsEntity.str}), '%') or u.phone like CONCAT(CONCAT('%',
+                #{couponsEntity.str}), '%'))
+            </if>
+            <if test="couponsEntity.branchId !=null and couponsEntity.branchId !=''">
+                and ho.id=#{couponsEntity.branchId}
+            </if>
+            <if test="couponsEntity.beginTime !=null and couponsEntity.beginTime !=''">
+                and c.add_time &gt;=#{couponsEntity.beginTime}
+            </if>
+            <if test="couponsEntity.endTime !=null and couponsEntity.endTime !=''">
+                and c.add_time &lt;=#{couponsEntity.endTime}
+            </if>
+            <if test="couponsEntity.day ==3">
+                and datediff(now(),c.add_time) &lt;=3
+            </if>
+            <if test="couponsEntity.day ==7">
+                and datediff(now(),c.add_time) &lt;=7
+            </if>
+            <if test="couponsEntity.day ==2">
+                and datediff(now(),c.add_time) =1
+            </if>
+            <if test="couponsEntity.day ==4">
+                and datediff(now(),c.add_time) =0
+            </if>
+            <if test="couponsEntity.day ==1">
+                and DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= date(c.add_time)
+            </if>
+        </where>
+        order by c.add_time desc
+    </select>
+    <select id="findYHxList" resultType="java.util.Map" parameterType="com.ymw.love.system.entity.coupon.CouponsEntity">
+        SELECT
+        c.id,
+        u.`name`,
+        u.phone,
+        c.money,
+        (SELECT treatment_date FROM u_see_doctor WHERE user_id=c.user_id
+        <if test="couponsEntity.optionStatus>0">
+            AND option_status=#{couponsEntity.optionStatus}
+        </if>
+        limit 1
+        ) AS treatmentSate,
+        (SELECT h.title FROM u_see_doctor AS s
+        LEFT JOIN u_hospital AS h ON s.hospital_id=h.id
+        WHERE user_id=c.user_id
+        <if test="couponsEntity.optionStatus>0">
+            AND option_status=#{couponsEntity.optionStatus}
+        </if>
+        limit 1
+        ) AS title,
+        (SELECT day_half_status FROM u_see_doctor WHERE user_id=c.user_id
+        <if test="couponsEntity.optionStatus>0">
+            AND option_status=#{couponsEntity.optionStatus}
+        </if>
+        limit 1
+        ) AS dayHalfStatus,
+        (SELECT patient_name FROM u_see_doctor WHERE user_id=c.user_id
+        <if test="couponsEntity.optionStatus>0">
+            AND option_status=#{couponsEntity.optionStatus}
+        </if>
+        limit 1
+        ) AS patientName,
+        (SELECT patient_phone FROM u_see_doctor WHERE user_id=c.user_id
+        <if test="couponsEntity.optionStatus>0">
+            AND option_status=#{couponsEntity.optionStatus}
+        </if>
+        limit 1
+        ) AS patientPhone,
+        ho.title AS hxBranch,
+        c.hx_person AS hxPerson,
+        c.hx_time AS hxTime
+        FROM
+        u_coupons AS c
+        LEFT JOIN u_user AS u ON c.user_id = u.id
+        LEFT JOIN u_hospital AS ho ON c.hx_branch = ho.id
+        <where>
+            <if test="couponsEntity.couponsType >0">
+                and c.coupons_type=#{couponsEntity.couponsType}
+            </if>
+            <if test="couponsEntity.couponsStatus>0">
+                and c.coupons_status=#{couponsEntity.couponsStatus}
+            </if>
+            <if test="couponsEntity.str !=null and couponsEntity.str !=''">
+                and (u.name like CONCAT(CONCAT('%', #{couponsEntity.str}), '%') or u.phone like CONCAT(CONCAT('%',
+                #{couponsEntity.str}), '%'))
+            </if>
+            <if test="couponsEntity.branchId !=null and couponsEntity.branchId !=''">
+                and ho.id=#{couponsEntity.branchId}
+            </if>
+            <if test="couponsEntity.beginTime !=null and couponsEntity.beginTime !=''">
+                and c.hx_time &gt;=#{couponsEntity.beginTime}
+            </if>
+            <if test="couponsEntity.endTime !=null and couponsEntity.endTime !=''">
+                and c.hx_time &lt;=#{couponsEntity.endTime}
+            </if>
+            <if test="couponsEntity.day ==3">
+                and datediff(now(),c.hx_time) &lt;=3
+            </if>
+            <if test="couponsEntity.day ==7">
+                and datediff(now(),c.hx_time) &lt;=7
+            </if>
+            <if test="couponsEntity.day ==2">
+                and datediff(now(),c.hx_time) =1
+            </if>
+            <if test="couponsEntity.day ==4">
+                and datediff(now(),c.hx_time) =0
+            </if>
+            <if test="couponsEntity.day ==1">
+                and DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= date(c.hx_time)
+            </if>
+        </where>
+        order by c.hx_time desc
+    </select>
+    <select id="findloveList" resultType="com.ymw.love.system.entity.coupon.CouponsEntity">
+        select  c.id,c.user_id as userId,u.phone from  u_coupons as  c
+        left join u_user as u on c.user_id=u.id
+        where c.salvation_id=#{id}
+    </select>
+
+    <select id="findWithdrawList" resultType="com.ymw.love.system.entity.coupon.WithdrawMoneyEntity"
+            parameterType="com.ymw.love.system.entity.coupon.WithdrawMoneyEntity">
+        select c.id,c.user_name as userName,c.phone,c.money,c.billing_method as billingMethod,c.account,c.add_time as
+        addTime,c.qr_code as qrCode,c.admin_name as adminName,
+        c.withdraw_time as withdrawTime
+        from u_withdraw_money as c
+        <where>
+            <if test="withdrawMoneyEntity.status >0">
+                and c.status=#{withdrawMoneyEntity.status}
+            </if>
+            <if test="withdrawMoneyEntity.str !=null and withdrawMoneyEntity.str !=''">
+                and (c.user_name like CONCAT(CONCAT('%',#{withdrawMoneyEntity.str}),'%') or c.phone like
+                CONCAT(CONCAT('%',#{withdrawMoneyEntity.str}),'%'))
+            </if>
+            <if test="withdrawMoneyEntity.status == 1">
+                <if test="withdrawMoneyEntity.beginTime !=null and withdrawMoneyEntity.beginTime !=''">
+                    and c.add_time &gt;=#{withdrawMoneyEntity.beginTime}
+                </if>
+                <if test="withdrawMoneyEntity.endTime !=null and withdrawMoneyEntity.endTime !=''">
+                    and c.add_time &lt;=#{withdrawMoneyEntity.endTime}
+                </if>
+                <if test="withdrawMoneyEntity.day ==3">
+                    and datediff(now(),c.add_time) &lt;=3
+                </if>
+                <if test="withdrawMoneyEntity.day ==7">
+                    and datediff(now(),c.add_time) &lt;=7
+                </if>
+                <if test="withdrawMoneyEntity.day ==2">
+                    and datediff(now(),c.add_time) =1
+                </if>
+                <if test="withdrawMoneyEntity.day ==4">
+                    and datediff(now(),c.add_time) =0
+                </if>
+                <if test="withdrawMoneyEntity.day ==1">
+                    and DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= date(c.add_time)
+                </if>
+            </if>
+            <if test="withdrawMoneyEntity.status == 2">
+                <if test="withdrawMoneyEntity.beginTime !=null and withdrawMoneyEntity.beginTime !=''">
+                    and c.withdraw_time &gt;=#{withdrawMoneyEntity.beginTime}
+                </if>
+                <if test="withdrawMoneyEntity.endTime !=null and withdrawMoneyEntity.endTime !=''">
+                    and c.withdraw_time &lt;=#{withdrawMoneyEntity.endTime}
+                </if>
+                <if test="withdrawMoneyEntity.day ==3">
+                    and datediff(now(),c.withdraw_time) &lt;=3
+                </if>
+                <if test="withdrawMoneyEntity.day ==7">
+                    and datediff(now(),c.withdraw_time) &lt;=7
+                </if>
+                <if test="withdrawMoneyEntity.day ==2">
+                    and datediff(now(),c.withdraw_time) =1
+                </if>
+                <if test="withdrawMoneyEntity.day ==4">
+                    and datediff(now(),c.withdraw_time) =0
+                </if>
+                <if test="withdrawMoneyEntity.day ==1">
+                    and DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= date(c.withdraw_time)
+                </if>
+            </if>
+        </where>
+        <if test="withdrawMoneyEntity.status == 1">
+            order by c.add_time desc
+        </if>
+        <if test="withdrawMoneyEntity.status == 2">
+            order by c.withdraw_time desc
+        </if>
+    </select>
+    <select id="findCount" resultType="java.util.Map">
+        <foreach collection="dates" item="item" open="(" separator=") UNION ALL (" close=")">
+            select IFNULL(SUM(money),0.00) AS money,count(c.id) as counts,#{item} as Dates,
+            (
+            SELECT IFNULL(SUM(money),0.00) AS dHxMoney FROM u_coupons WHERE coupons_type=1 AND coupons_status=1 and
+            DATE_FORMAT(add_time, '%Y-%m-%d')=#{item}
+            )AS dHxMoney,
+            (
+            SELECT IFNULL(SUM(money),0.00) AS yHxMoney FROM u_coupons WHERE coupons_type=1 AND coupons_status=3 and
+            DATE_FORMAT(add_time, '%Y-%m-%d')=#{item}
+            )AS yHxMoney,
+            (
+            SELECT IFNULL(SUM(money),0.00) AS dWithdrawMoney FROM u_coupons WHERE coupons_type=2 AND coupons_status=2
+            and DATE_FORMAT(add_time, '%Y-%m-%d')=#{item}
+            )AS dWithdrawMoney,
+            (
+            SELECT IFNULL(SUM(money),0.00) AS yWithdrawMoney FROM u_coupons WHERE coupons_type=2 AND coupons_status=3
+            and DATE_FORMAT(add_time, '%Y-%m-%d')=#{item}
+            )AS yWithdrawMoney
+            from u_coupons as c
+            WHERE c.coupons_type=2 and DATE_FORMAT(c.add_time, '%Y-%m-%d')=#{item}
+        </foreach>
+    </select>
+    <select id="findBottomCount" resultType="java.util.Map">
+        select IFNULL(SUM(money),0.00) AS totalMoney,count(c.id) as counts,
+        ( SELECT IFNULL(SUM(money),0.00) AS dHxMoneyTotal FROM u_coupons WHERE coupons_type=1 AND coupons_status=1
+        <include refid="where_if_date"/>
+        )AS dHxMoneyTotal,
+        ( SELECT IFNULL(SUM(money),0.00) AS yHxMoneyTotal FROM u_coupons WHERE coupons_type=1 AND coupons_status=3
+        <include refid="where_if_date"/>
+        )AS yHxMoneyTotal,
+        ( SELECT IFNULL(SUM(money),0.00) AS dWithdrawMoneyTotal FROM u_coupons WHERE coupons_type=2 AND coupons_status=2
+        <include refid="where_if_date"/>
+        )AS dWithdrawMoneyTotal,
+        ( SELECT IFNULL(SUM(money),0.00) AS yWithdrawMoneyTotal FROM u_coupons WHERE coupons_type=2 AND coupons_status=3
+        <include refid="where_if_date"/>
+        )AS yWithdrawMoneyTotal
+        from u_coupons as c
+        WHERE c.coupons_type=2
+        <if test="withdrawMoneyEntity.beginTime !=null and withdrawMoneyEntity.beginTime !=''">
+            and c.add_time &gt;=#{withdrawMoneyEntity.beginTime}
+        </if>
+        <if test="withdrawMoneyEntity.endTime !=null and withdrawMoneyEntity.endTime !=''">
+            and c.add_time &lt;=#{withdrawMoneyEntity.endTime}
+        </if>
+        <if test="withdrawMoneyEntity.day ==3">
+            and datediff(now(),c.add_time) &lt;=3
+        </if>
+        <if test="withdrawMoneyEntity.day ==7">
+            and datediff(now(),c.add_time) &lt;=7
+        </if>
+        <if test="withdrawMoneyEntity.day ==2">
+            and datediff(now(),c.add_time) =1
+        </if>
+        <if test="withdrawMoneyEntity.day ==4">
+            and datediff(now(),c.add_time) =0
+        </if>
+        <if test="withdrawMoneyEntity.day ==1">
+            and DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= date(c.add_time)
+        </if>
+    </select>
+    <select id="findLoveTotalSum" resultType="java.lang.Integer">
+        SELECT IFNULL(SUM(c.money),0.00) as money
+        FROM u_coupons as c
+        where c.user_id=#{couponsEntity.userId} and c.coupons_type=2
+    </select>
+
+    <sql id="where_if_date">
+        <if test="withdrawMoneyEntity.beginTime !=null and withdrawMoneyEntity.beginTime !=''">
+            and add_time &gt;=#{withdrawMoneyEntity.beginTime}
+        </if>
+        <if test="withdrawMoneyEntity.endTime !=null and withdrawMoneyEntity.endTime !=''">
+            and add_time &lt;=#{withdrawMoneyEntity.endTime}
+        </if>
+        <if test="withdrawMoneyEntity.day ==3">
+            and datediff(now(),add_time) &lt;=3
+        </if>
+        <if test="withdrawMoneyEntity.day ==7">
+            and datediff(now(),add_time) &lt;=7
+        </if>
+        <if test="withdrawMoneyEntity.day ==2">
+            and datediff(now(),add_time) =1
+        </if>
+        <if test="withdrawMoneyEntity.day ==4">
+            and datediff(now(),add_time) =0
+        </if>
+        <if test="withdrawMoneyEntity.day ==1">
+            and DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= date(add_time)
+        </if>
+    </sql>
+
+</mapper>

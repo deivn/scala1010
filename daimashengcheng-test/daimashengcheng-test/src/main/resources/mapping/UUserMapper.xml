@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.UUserMapper">
+
+  
+
+<!-- 用户中心显示数据 -->
+  <select id="findUserCount" resultType="com.ymw.love.system.entity.UUser">
+  SELECT   ex.total_money,ex.money,
+  (SELECT COUNT(1) as tta FROM  u_faqs  WHERE user_id=#{id}) as faqs_count,
+  (SELECT COUNT(1) as tt FROM  u_user_relation  WHERE u_id_one =#{id} and  state=1 ) as friend_count,
+  uu.nick_name,uu.image_url ,uu.invite_code FROM u_user  as uu INNER JOIN `u_user_extend` as ex on ex.uid=uu.id 
+  WHERE uu.id=#{id}
+  </select>
+  
+ <!-- 用户个人中详情 -->
+ <select id="findUserDetails" resultType="java.util.Map">
+ SELECT  uu.nick_name as nickName ,uu.image_url as imageUrl ,uu.phone ,IF(uu.idcard_time is null ,0,1) as idcardState ,IF(up.number is null ,0,1) as payeeState ,
+ uu.idcard,uu.name, up.type as payeeType ,up.number as payeeNumber ,up.image_url as payeeImageUrl
+ FROM u_user  as uu LEFT  JOIN `u_user_payee` as up on up.uid=uu.id
+ WHERE  uu.id=#{id}
+ </select>
+
+<!-- 一级用户  -->
+ <select id="fidnUserfriend" resultType="com.ymw.love.system.entity.UUser">
+ SELECT  
+  <if test="hidePhone == null">
+    INSERT(uu.phone,4,4,'****') as phone,
+  </if>
+  
+  <if test="hidePhone != null">
+    phone,
+  </if>
+  uu.creates_time,IF(uu.idcard is null ,'0','1') as idcard ,uu.nick_name,uu.state  FROM `u_user_relation` as uur LEFT JOIN u_user  as uu on uu.id=uur.u_id
+ WHERE uur.u_id_one =#{id} ORDER BY creates_time desc
+ </select>
+
+<!-- 后台列表查询 -->
+<select id="findUserList" parameterType="com.ymw.love.system.dto.BasicDTO" resultType="com.ymw.love.system.entity.UUser">
+ SELECT uu.id,uu.nick_name,uu.invite_code,uu.phone,uu.creates_time,uu.state,IF(uu.idcard is null ,'0','1') as idcard ,cause ,
+ (SELECT COUNT(1) as tt FROM  u_user_relation  WHERE u_id_one =uu.id and  state=1 ) as friend_count
+ FROM u_user as uu 
+    <where>  
+        1=1
+       <if test="arg.startTime !=null and arg.startTime !='' ">
+        and   uu.creates_time &gt;= #{arg.startTime}
+       </if>
+       <if test="arg.closeTime !=null and arg.closeTime !='' ">
+       and uu.creates_time  &lt;= #{arg.closeTime}
+       </if>
+       
+       <if test=" arg.name !=null   and arg.name !=''">
+        and uu.nick_name LIKE concat('%',#{arg.name},'%') or uu.phone LIKE concat('%',#{arg.name},'%')
+       </if>
+       
+       
+       <if test="arg.state !=null and arg.state !=0 ">
+        and uu.state=#{arg.state}
+       </if>
+
+     </where>
+
+
+
+</select>
+
+
+
+</mapper>

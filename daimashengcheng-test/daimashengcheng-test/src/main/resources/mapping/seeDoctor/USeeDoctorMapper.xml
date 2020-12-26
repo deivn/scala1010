@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.seeDoctor.USeeDoctorMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.ymw.love.system.entity.seeDoctor.USeeDoctor">
+		<result column="order_id" property="orderId" />
+		<result column="hospital_id" property="hospitalId" />
+		<result column="user_id" property="userId" />
+		<result column="patient_name" property="patientName" />
+		<result column="patient_phone" property="patientPhone" />
+		<result column="patient_id_number" property="patientIdNumber" />
+		<result column="treatment_date" property="treatmentDate" />
+		<result column="treatment_time" property="treatmentTime" />
+		<result column="take_password" property="takePassword" />
+		<result column="option_status" property="optionStatus" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        order_id AS orderId, user_id AS userId, patient_name AS patientName, patient_phone AS patientPhone, patient_id_number AS patientIdNumber, treatment_date AS treatmentDate, treatment_time AS treatmentTime, take_password AS takePassword, option_status AS optionStatus, create_time AS createTime
+    </sql>
+
+
+	<select id="selectWeekday"  resultType="java.lang.Integer">
+		select WEEKDAY(#{dateTime})+1
+	</select>
+
+</mapper>

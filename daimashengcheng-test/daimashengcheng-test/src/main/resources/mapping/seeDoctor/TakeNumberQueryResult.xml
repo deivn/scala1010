@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.seeDoctor.TakeNumberQueryResultMapper">
+
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.order_id, a.option_status, a.patient_name, a.treatment_date, a.treatment_time, a.take_password, b.image_url, b.title, b.site, b.phone, CASE a.option_status
+		WHEN 1 THEN '2, 3'
+		WHEN 2 THEN '4'
+		ELSE ''
+    </sql>
+
+	<select id="findNumbersByHospitalId" resultType="com.ymw.love.system.entity.seeDoctor.query.TakeNumberQueryResult">
+		SELECT create_time AS appointDate, WEEKDAY(create_time) + 1 AS weekDay, am_source_unuse AS amUnuse
+	, CASE am_source_unuse
+		WHEN 0 THEN 0
+		ELSE 1
+	END AS amFull, pm_source_unuse AS pmUnuse
+	, CASE pm_source_unuse
+		WHEN 0 THEN 0
+		ELSE 1
+	END AS pmFull
+FROM u_take_number
+WHERE create_time > DATE_FORMAT(now(), '%Y-%m-%d')
+and hospital_id = #{hospitalId}
+order by create_time asc
+	</select>
+
+</mapper>

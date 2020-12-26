@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.posters.UPostersShareMapper">
+
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.ymw.love.system.entity.posters.UPostersShare">
+		<id column="id" property="id" />
+		<result column="posters_id" property="postersId" />
+		<result column="app_sign" property="appSign" />
+		<result column="shares" property="shares" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, posters_id AS postersId, app_sign AS appSign, shares
+    </sql>
+
+</mapper>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.posters.PostersManagerMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.ymw.love.system.entity.posters.query.PostersQueryResult">
+		<result column="seq" property="seq" jdbcType="INTEGER"/>
+		<result column="id" property="id" jdbcType="VARCHAR"/>
+		<result column="posters_name" property="postersName" jdbcType="VARCHAR"/>
+		<result column="posters_desc" property="postersDesc" jdbcType="VARCHAR"/>
+		<result column="posters_img" property="postersImg" jdbcType="VARCHAR"/>
+		<result column="publish_status" property="publishStatus" jdbcType="INTEGER"/>
+		<result column="publish_time" property="publishTime" jdbcType="VARCHAR"/>
+		<result column="wechat" property="wechat" jdbcType="INTEGER"/>
+		<result column="friends" property="friends" jdbcType="INTEGER"/>
+		<result column="qq" property="qq" jdbcType="INTEGER"/>
+		<result column="shares_list" property="sharesList" jdbcType="VARCHAR"/>
+		<result column="operable" property="operable" jdbcType="INTEGER"/>
+	</resultMap>
+
+
+	<select id="queryPostersList" resultMap="BaseResultMap">
+		SELECT @seq := @seq + 1 AS seq, c.*
+		FROM (
+		SELECT (
+		SELECT @seq := 0
+		) AS r, id, posters_name, posters_desc, posters_img
+		, publish_status, publish_time, b.wechat, b.friends
+		, b.qq
+		, CASE publish_status
+		WHEN 1 THEN 4
+		WHEN 2 THEN 5
+		END AS operable
+		FROM u_posters a
+		LEFT JOIN (
+		SELECT posters_id, MAX(CASE app_sign
+		WHEN 1 THEN shares
+		ELSE 0
+		END) AS wechat, MAX(CASE app_sign
+		WHEN 2 THEN shares
+		ELSE 0
+		END) AS friends
+		, MAX(CASE app_sign
+		WHEN 3 THEN shares
+		ELSE 0
+		END) AS qq
+		FROM u_posters_share
+		GROUP BY posters_id
+		) b
+		ON a.id = b.posters_id
+		<where>
+			<trim prefix="(" suffix=")" suffixOverrides="AND">
+				<if test="startDate != null and startDate != ''">
+					DATE_FORMAT(a.publish_time,'%Y-%m-%d') &gt;= #{startDate} AND
+				</if>
+				<if test="endDate != null and endDate != ''">
+					DATE_FORMAT(a.publish_time,'%Y-%m-%d') &lt;= #{endDate} AND
+				</if>
+				a.is_delete = 1 and (a.publish_status = 1
+				OR a.publish_status = 2)
+			</trim>
+			)c
+		</where>
+		order by c.publish_time desc
+
+	</select>
+
+
+</mapper>

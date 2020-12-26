@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.UHospitalMapper">
+
+
+    <resultMap id="QueryResultMap" type="com.ymw.love.system.vo.EvaluationQueryResultVO">
+        <result column="seq" property="seq" jdbcType="INTEGER"/>
+        <result column="id" property="evaluationId" jdbcType="VARCHAR"/>
+        <result column="evaluation_detail" property="evaluationDetail" jdbcType="VARCHAR"/>
+        <result column="nick_name" property="patientName" jdbcType="VARCHAR"/>
+        <result column="create_time" property="dateTime" jdbcType="VARCHAR"/>
+        <result column="title" property="hospitalName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+	
+    
+    <!-- 根据经纬度排序最近 -->
+    <select id="findRecommend"  resultType="com.ymw.love.system.entity.UHospital">
+    SELECT id,site,title,phone,
+(6371 * acos (  cos ( radians(#{lat}) )* cos( radians( lat ) )  * cos( radians( lng ) - radians(#{lng}) )  + sin ( radians(#{lat}) )  * sin( radians( lat ) )  )  ) as dis
+from u_hospital WHERE state=1  ORDER BY dis
+    </select>
+    
+    
+    
+    
+    <!-- 评价列表查询 -->
+    <select id="queryEvaluatResultList"  resultMap="QueryResultMap">
+        SELECT @seq := @seq + 1 AS seq, d.*
+        FROM (
+        SELECT (
+        SELECT @seq := 0
+        ) AS r, a.id, a.evaluation_detail, b.nick_name, a.create_time
+        , c.title
+        FROM u_patient_evaluation a
+        LEFT JOIN u_user b ON a.user_id = b.id
+        LEFT JOIN u_hospital c ON a.hospital_id = c.id
+        <where>
+            <trim prefix="(" suffix=")" suffixOverrides="AND">
+                <if test="hospitalId != null and hospitalId != ''">
+                    a.hospital_id = #{hospitalId} AND
+                </if>
+
+                <if test="startDate != null and startDate != ''">
+                    DATE_FORMAT(a.create_time,'%Y-%m-%d') &gt;= #{startDate} AND
+                </if>
+                <if test="endDate != null and endDate != ''">
+                    DATE_FORMAT(a.create_time,'%Y-%m-%d') &lt;= #{endDate} AND
+                </if>
+                a.is_delete = 1
+            </trim>
+            )d
+        </where>
+        ORDER BY d.create_time DESC
+    </select>
+
+</mapper>

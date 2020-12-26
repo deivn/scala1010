@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.seeDoctor.UTakeNumberMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.ymw.love.system.entity.seeDoctor.UTakeNumber">
+		<id column="id" property="id" />
+		<result column="hospital_id" property="hospitalId" />
+		<result column="total_source" property="totalSource" />
+		<result column="am_source" property="amSource" />
+		<result column="am_source_used" property="amSourceUsed" />
+		<result column="am_source_unuse" property="amSourceUnuse" />
+		<result column="pm_source" property="pmSource" />
+		<result column="pm_source_used" property="pmSourceUsed" />
+		<result column="pm_source_unuse" property="pmSourceUnuse" />
+		<result column="flag" property="flag" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, hospital_id AS hospitalId, total_source AS totalSource, am_source AS amSource, am_source_used AS amSourceUsed, am_source_unuse AS amSourceUnuse, pm_source AS pmSource, pm_source_used AS pmSourceUsed, pm_source_unuse AS pmSourceUnuse, flag
+    </sql>
+
+</mapper>

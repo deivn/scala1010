@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.test.TestMapper">
+
+
+    <select id="findName" resultType="com.ymw.love.system.dto.test.TestResultDTO" parameterType="integer">
+        select name from panzeh_test where id = #{id}
+    </select>
+
+
+</mapper>

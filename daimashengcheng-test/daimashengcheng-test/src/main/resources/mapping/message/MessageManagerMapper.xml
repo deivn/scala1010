@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.message.MessageManagerMapper">
+
+	<resultMap id="BaseResultMap" type="com.ymw.love.system.entity.message.query.MessageQueryResult">
+		<result column="seq" property="seq" jdbcType="INTEGER"/>
+		<result column="id" property="id" jdbcType="VARCHAR"/>
+		<result column="title" property="title" jdbcType="VARCHAR"/>
+		<result column="activity_info" property="content" jdbcType="VARCHAR"/>
+		<result column="name" property="categoryName" jdbcType="VARCHAR"/>
+		<result column="date_time" property="dateTime" jdbcType="VARCHAR"/>
+		<result column="operable" property="operable" jdbcType="INTEGER"/>
+	</resultMap>
+
+	<resultMap id="BaseCategoryMap" type="com.ymw.love.system.entity.message.query.MessageAdminQueryResult">
+		<result column="seq" property="seq" jdbcType="INTEGER"/>
+		<result column="id" property="id" jdbcType="VARCHAR"/>
+		<result column="name" property="categoryName" jdbcType="VARCHAR"/>
+		<result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="queryPreSendList" resultMap="BaseResultMap">
+		SELECT @seq := @seq + 1 AS seq, c.*
+FROM (
+	SELECT (
+			SELECT @seq := 0
+		) AS r, a.id, a.title, a.activity_info, b.name
+		, a.edit_time AS date_time
+	FROM u_message_config a
+		LEFT JOIN u_message_category b ON a.category_id = b.id
+	WHERE a.is_delete = 1 and a.option_status = 1
+) c
+ORDER BY c.date_time DESC
+	</select>
+
+	<select id="querySentList" resultMap="BaseResultMap">
+		SELECT @seq := @seq + 1 AS seq, c.*
+		FROM (
+		SELECT (
+		SELECT @seq := 0
+		) AS r, a.id, a.title, a.activity_info, b.name
+		, a.send_time AS date_time
+		FROM u_message_config a
+		LEFT JOIN u_message_category b ON a.category_id = b.id
+		<where>
+			<trim prefix="(" suffix=")" suffixOverrides="AND">
+				<if test="startDate != null and startDate != ''">
+					DATE_FORMAT(a.send_time,'%Y-%m-%d') &gt;= #{startDate} AND
+				</if>
+				<if test="endDate != null and endDate != ''">
+					DATE_FORMAT(a.send_time,'%Y-%m-%d') &lt;= #{endDate} AND
+				</if>
+				a.is_delete = 1 and a.option_status = 2
+			</trim>
+			)c
+		</where>
+		ORDER BY c.date_time DESC
+	</select>
+
+	<select id="queryCategoryList" resultMap="BaseCategoryMap">
+		SELECT @seq := @seq + 1 AS seq, c.*
+		FROM (
+		SELECT (
+		SELECT @seq := 0
+		) AS r, id, name, create_time
+		FROM u_message_category
+		WHERE is_delete = 1
+		) c
+		ORDER BY c.create_time DESC
+	</select>
+
+
+</mapper>

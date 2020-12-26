@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.faq.FaqMapper">
+
+    <select id="findDetails" resultType="java.util.Map" parameterType="com.ymw.love.system.entity.faq.FaqEntity">
+        select f.id,f.issue_content AS issueContent,f.content_img AS Img,f.type_name AS typeName,f.browse_count as
+        browseCount,f.anonymity_status as anonymityStatus
+        ,(SELECT COUNT(id) FROM u_faq_collect WHERE f.id=faq_id
+        <if test="userId !=null and userId !=''">
+            and user_id=#{userId}
+        </if>
+        ) AS collectStatus
+        ,(SELECT COUNT(id) FROM u_faq_collect WHERE f.id=faq_id) AS collectCount
+        ,DATE_FORMAT(f.add_time,'%Y-%m-%d') as addTime,u.nick_name AS nickName,u.image_url as imageUrl
+        from u_faqs as f
+        LEFT JOIN u_user as u ON f.user_id=u.id
+        <where>
+            <if test="id !=null">
+                and f.id=#{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="findCommentList" resultType="java.util.Map" parameterType="com.ymw.love.system.entity.faq.FaqEntity">
+        select c.id,c.comment_content AS commentContent,c.user_id as userId,
+        DATE_FORMAT(c.add_time,'%Y-%m-%d') as addTime,u.nick_name AS nickName,u.image_url as imageUrl,
+        (SELECT COUNT(id) FROM u_faq_comment_give WHERE c.id=comment_id
+        <if test="userId !=null and userId !=''">
+            and user_id=#{userId}
+        </if>
+        ) AS commentGiveStatus,
+        (SELECT COUNT(id) FROM u_faq_comment_give WHERE c.id=comment_id) AS commentGiveCount
+        from u_faq_comment as c
+        LEFT JOIN u_user as u ON c.user_id=u.id
+        WHERE c.status=1 and c.parent_id is null
+        <if test="id !=null">
+            and c.faq_id=#{id}
+        </if>
+        order by c.add_time desc
+    </select>
+
+    <select id="findCommentById" resultType="java.util.Map" parameterType="com.ymw.love.system.entity.faq.FaqEntity">
+        select c.id,c.comment_content AS commentContent,c.parent_id AS parentId,
+        DATE_FORMAT(c.add_time,'%Y-%m-%d') as addTime,u.nick_name AS nickName,u.image_url as imageUrl,
+        (SELECT COUNT(0) FROM u_faq_comment WHERE parent_id=c.id) AS replyCount,
+        (SELECT COUNT(id) FROM u_faq_comment_give WHERE c.id=comment_id
+        <if test="userId !=null and userId !=''">
+            and user_id=#{userId}
+        </if>
+        ) AS commentGiveStatus,
+        (SELECT COUNT(id) FROM u_faq_comment_give WHERE c.id=comment_id) AS commentGiveCount
+        from u_faq_comment as c
+        LEFT JOIN u_user as u ON c.user_id=u.id
+        WHERE c.status=1
+        <if test="id !=null">
+            and c.id=#{id}
+        </if>
+    </select>
+    <select id="findCommentSubLevelList" resultType="java.util.Map"
+            parameterType="com.ymw.love.system.entity.faq.FaqEntity">
+        select c.id,c.comment_content AS commentContent,c.parent_id AS parentId,c.user_id as userId,
+        DATE_FORMAT(c.add_time,'%Y-%m-%d') as addTime,u.nick_name AS nickName,u.image_url as imageUrl
+        from u_faq_comment as c
+        LEFT JOIN u_user as u ON c.user_id=u.id
+        WHERE c.status=1
+        <if test="id !=null">
+            and c.parent_id=#{id}
+        </if>
+    </select>
+
+    <select id="selectFaqPageList" resultType="com.ymw.love.system.entity.faq.FaqEntity"
+            parameterType="com.ymw.love.system.entity.faq.FaqEntity">
+        select f.id,f.issue_content as issueContent,f.anonymity_status as anonymityStatus
+        ,f.type_name as  typeName,
+        (select count(id) from u_faq_comment WHERE f.id=faq_id ) AS replyCount
+        from u_faqs AS f
+        WHERE f.audit_status=2
+        <if test="faqEntity.issueContent !=null and faqEntity.issueContent!=''">
+           and f.issue_content LIKE CONCAT(CONCAT('%', #{faqEntity.issueContent}), '%')
+        </if>
+        <if test="faqEntity.typeName !=null and faqEntity.typeName!=''">
+            and f.type_name LIKE CONCAT(CONCAT('%', #{faqEntity.typeName}), '%')
+        </if>
+         ORDER BY f.recommend_status desc,replyCount DESC,f.add_time DESC
+    </select>
+
+    <select id="findSpecialDetailsList" resultType="com.ymw.love.system.entity.faq.FaqEntity"
+            parameterType="com.ymw.love.system.entity.faq.FaqEntity">
+        select f.id,f.issue_content as issueContent,f.browse_count as browseCount
+        ,
+        (select count(id) from u_faq_comment WHERE f.id=faq_id ) AS replyCount
+        from u_faqs AS f
+        left join u_special as s on  s.faq_id=f.id
+        WHERE f.audit_status=2 AND s.parent_id=#{faqEntity.id}
+        ORDER BY f.recommend_status desc,replyCount DESC,f.add_time DESC
+    </select>
+
+
+    <select id="findSpecial" resultType="com.ymw.love.system.entity.faq.SpecialEntity">
+        select s.id,s.title,s.sort,s.add_time as addTime,(SELECT COUNT(id) FROM u_special WHERE parent_id=s.id) AS specialCount,SUM(f.browse_count) AS browseCount
+        ,s.cover_img as coverImg
+        from u_special AS s
+        LEFT JOIN u_faqs as f ON s.faq_id=f.id
+        where  s.parent_id is null
+        GROUP BY s.title
+        ORDER BY s.sort DESC,s.add_time DESC
+    </select>
+
+    <select id="selectFaqSpecialList" resultType="com.ymw.love.system.entity.faq.SpecialEntity"
+            parameterType="com.ymw.love.system.entity.faq.SpecialEntity">
+        select s.id,s.title,s.cover_img as  coverImg
+        from u_special AS s
+        where s.parent_id is null
+        <if test="special.id !=null and special.id !=''">
+            s.id=#{special.id}
+        </if>
+        <if test="special.id ==null or special.id ==''">
+            ORDER BY s.sort DESC,s.add_time DESC
+        </if>
+    </select>
+
+    <select id="findSpecialDetail" resultType="com.ymw.love.system.entity.faq.SpecialEntity"
+            parameterType="com.ymw.love.system.entity.faq.SpecialEntity">
+         select s.id,s.title,f.issue_content AS issueContent,f.browse_count AS browseCount,
+        (SELECT COUNT(id) FROM u_faq_comment WHERE faq_id=f.id) AS commentCount,
+        (SELECT COUNT(id) FROM u_faq_share_record WHERE faq_id=f.id) AS recordCount
+        from u_special AS s
+        LEFT JOIN u_faqs as f on s.faq_id=f.id
+        where s.parent_id=#{special.id}
+        ORDER BY f.add_time DESC
+    </select>
+    <select id="findSysFaqList" resultType="com.ymw.love.system.entity.faq.FaqEntity">
+        select f.id,f.issue_content as  issueContent,f.type_name as typeName,f.add_time as addTime,
+        f.recommend_status as  recommendStatus,(select count(id) from u_special where faq_id=f.id) as isRecommend,u.name as name,
+        (select title from u_special where faq_id=f.id LIMIT 1) as specialTitle
+        ,
+        (select id from u_special where faq_id=f.id LIMIT 1) as specialId
+        from  u_faqs as f
+        left join u_user as u on f.user_id=u.id
+        <where>
+            <if test="faq.str !=null and faq.str !=''">
+                and u.name like CONCAT('%'#{faq.str}'%')
+            </if>
+            <if test="faq.beginTime !=null and faq.beginTime !=''">
+                and f.add_time &gt;=#{faq.beginTime}
+            </if>
+            <if test="faq.endTime !=null and faq.endTime !=''">
+                and f.add_time &lt;=#{faq.endTime}
+            </if>
+            <if test="faq.day ==3">
+                and datediff(now(),f.add_time) &lt;=3
+            </if>
+            <if test="faq.day ==7">
+                and datediff(now(),f.add_time) &lt;=7
+            </if>
+            <if test="faq.day ==2">
+                and datediff(now(),f.add_time) =1
+            </if>
+            <if test="faq.day ==4">
+                and datediff(now(),f.add_time) =0
+            </if>
+            <if test="faq.day ==1">
+                and DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= date(f.add_time)
+            </if>
+        </where>
+        order by f.add_time desc
+    </select>
+    <select id="findFaqCount" resultType="java.lang.Integer">
+        SELECT SUM(f.browse_count) AS browseCount FROM u_special AS s
+        LEFT JOIN u_faqs AS f ON s.faq_id=f.id
+        WHERE s.parent_id=#{parentId}
+    </select>
+
+</mapper>

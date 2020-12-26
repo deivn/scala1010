@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ymw.love.system.mapper.seeDoctor.RegistManagerMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.ymw.love.system.entity.seeDoctor.query.BaseQuery">
+		<result column="seq" property="seq" jdbcType="INTEGER"/>
+		<result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+		<result column="nick_name" property="userNickName" jdbcType="VARCHAR"/>
+		<result column="patient_name" property="patientName" jdbcType="VARCHAR"/>
+		<result column="patient_phone" property="patientPhone" jdbcType="VARCHAR"/>
+		<result column="patient_id_number" property="patientIdNumber" jdbcType="VARCHAR"/>
+		<result column="treatment_date" property="treatmentDate" jdbcType="VARCHAR"/>
+		<result column="day_half_status" property="dayHalfStatus" jdbcType="INTEGER"/>
+		<result column="option_status" property="optionStatus" jdbcType="INTEGER"/>
+		<result column="title" property="hospitalTitle" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<resultMap id="TakeNumberResultMap" type="com.ymw.love.system.entity.seeDoctor.query.NumberQueryResult">
+		<result column="seq" property="seq" jdbcType="INTEGER"/>
+		<result column="id" property="id" jdbcType="VARCHAR"/>
+		<result column="create_time" property="treatmentDate" jdbcType="VARCHAR"/>
+		<result column="total_source" property="totalSource" jdbcType="INTEGER"/>
+		<result column="am_source_used" property="amSourceUsed" jdbcType="INTEGER"/>
+		<result column="am_source_unuse" property="amSourceUnuse" jdbcType="INTEGER"/>
+		<result column="pm_source_used" property="pmSourceUsed" jdbcType="INTEGER"/>
+		<result column="pm_source_unuse" property="pmSourceUnuse" jdbcType="INTEGER"/>
+		<result column="title" property="hospitalTitle" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<resultMap id="PreResultMap" type="com.ymw.love.system.entity.seeDoctor.query.PreSeeDoctorQueryResult" extends="BaseResultMap">
+		<result column="take_password" property="takePassword" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<resultMap id="FinishResultMap" type="com.ymw.love.system.entity.seeDoctor.query.FinishSeeDoctorQueryResult" extends="BaseResultMap">
+		<result column="option_user" property="optionUser" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<resultMap id="CancelResultMap" type="com.ymw.love.system.entity.seeDoctor.query.CancelSeeDoctorQueryResult" extends="BaseResultMap">
+		<result column="cancel_time" property="cancelTime" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="selectPreList" resultMap="PreResultMap">
+		SELECT @seq := @seq + 1 AS seq, d.*
+		FROM (
+		SELECT (
+		SELECT @seq := 0
+		) AS r, a.order_id, a.user_id, a.patient_name, a.patient_phone
+		, a.patient_id_number, a.take_password, a.treatment_date, a.day_half_status, a.option_status
+		, b.title, c.nick_name
+		FROM u_see_doctor a
+		LEFT JOIN u_hospital b ON a.hospital_id = b.id
+		LEFT JOIN u_user c ON a.user_id = c.id
+		<where>
+			<trim prefix="(" suffix=")" suffixOverrides="AND">
+				<if test="mangerInput.hospitalId != null and mangerInput.hospitalId != ''">
+					b.id = #{mangerInput.hospitalId} AND
+				</if>
+				<if test="mangerInput.startDate != null and mangerInput.startDate != ''">
+					a.treatment_date &gt;= #{mangerInput.startDate} AND
+				</if>
+				<if test="mangerInput.endDate != null and mangerInput.endDate != ''">
+					a.treatment_date &lt;= #{mangerInput.endDate} AND
+				</if>
+				<if test="mangerInput.patientDesc != null and mangerInput.patientDesc != ''">
+					(a.patient_phone = #{mangerInput.patientDesc} OR a.patient_name = #{mangerInput.patientDesc} OR c.nick_name = #{mangerInput.patientDesc}) AND
+				</if>
+				  a.option_status = 1
+			</trim>
+			)d
+		</where>
+		order by d.treatment_date desc
+	</select>
+
+	<select id="selectFinishList" resultMap="FinishResultMap">
+		SELECT @seq := @seq + 1 AS seq, e.*
+		FROM (
+		SELECT (
+		SELECT @seq := 0
+		) AS r, a.order_id, a.user_id, a.patient_name, a.patient_phone
+		, a.patient_id_number, a.treatment_date, a.day_half_status, a.option_status
+		, a.act_uid, b.title, c.nick_name, d.user_name as option_user
+		FROM u_see_doctor a
+		LEFT JOIN u_hospital b ON a.hospital_id = b.id
+		LEFT JOIN u_user c ON a.user_id = c.id
+		LEFT JOIN a_user d ON d.id = a.act_uid
+		<where>
+			<trim prefix="(" suffix=")" suffixOverrides="AND">
+				<if test="mangerInput.hospitalId != null and mangerInput.hospitalId != ''">
+					b.id = #{mangerInput.hospitalId} AND
+				</if>
+				<if test="mangerInput.startDate != null and mangerInput.startDate != ''">
+					a.treatment_date &gt;= #{mangerInput.startDate} AND
+				</if>
+				<if test="mangerInput.endDate != null and mangerInput.endDate != ''">
+					a.treatment_date &lt;= #{mangerInput.endDate} AND
+				</if>
+				<if test="mangerInput.patientDesc != null and mangerInput.patientDesc != ''">
+					(a.patient_phone = #{mangerInput.patientDesc} OR a.patient_name = #{mangerInput.patientDesc} OR c.nick_name = #{mangerInput.patientDesc}) AND
+				</if>
+				a.option_status = 2
+			</trim>
+			)e
+		</where>
+		order by e.treatment_date desc
+	</select>
+
+	<select id="selectOutOfDateList" resultMap="BaseResultMap">
+		SELECT @seq := @seq + 1 AS seq, e.*
+		FROM (
+		SELECT (
+		SELECT @seq := 0
+		) AS r, a.order_id, a.user_id, a.patient_name, a.patient_phone
+		, a.patient_id_number, a.treatment_date, a.day_half_status, a.option_status
+		, b.title, c.nick_name
+		FROM u_see_doctor a
+		LEFT JOIN u_hospital b ON a.hospital_id = b.id
+		LEFT JOIN u_user c ON a.user_id = c.id
+		<where>
+			<trim prefix="(" suffix=")" suffixOverrides="AND">
+				<if test="mangerInput.hospitalId != null and mangerInput.hospitalId != ''">
+					b.id = #{mangerInput.hospitalId} AND
+				</if>
+				<if test="mangerInput.startDate != null and mangerInput.startDate != ''">
+					a.treatment_date &gt;= #{mangerInput.startDate} AND
+				</if>
+				<if test="mangerInput.endDate != null and mangerInput.endDate != ''">
+					a.treatment_date &lt;= #{mangerInput.endDate} AND
+				</if>
+				<if test="mangerInput.patientDesc != null and mangerInput.patientDesc != ''">
+					(a.patient_phone = #{mangerInput.patientDesc} OR a.patient_name = #{mangerInput.patientDesc} OR c.nick_name = #{mangerInput.patientDesc}) AND
+				</if>
+				a.option_status = 4
+			</trim>
+			)e
+		</where>
+		order by e.treatment_date desc
+	</select>
+
+	<select id="selectCancelDateList" resultMap="CancelResultMap">
+		SELECT @seq := @seq + 1 AS seq, e.*
+		FROM (
+		SELECT (
+		SELECT @seq := 0
+		) AS r, a.order_id, a.user_id, a.patient_name, a.patient_phone
+		, a.patient_id_number, a.treatment_date, a.day_half_status, a.option_status
+		, a.cancel_time, b.title, c.nick_name
+		FROM u_see_doctor a
+		LEFT JOIN u_hospital b ON a.hospital_id = b.id
+		LEFT JOIN u_user c ON a.user_id = c.id
+		<where>
+			<trim prefix="(" suffix=")" suffixOverrides="AND">
+				<if test="mangerInput.hospitalId != null and mangerInput.hospitalId != ''">
+					b.id = #{mangerInput.hospitalId} AND
+				</if>
+				<if test="mangerInput.startDate != null and mangerInput.startDate != ''">
+					a.cancel_time &gt;= #{mangerInput.startDate} AND
+				</if>
+				<if test="mangerInput.endDate != null and mangerInput.endDate != ''">
+					a.cancel_time &lt;= #{mangerInput.endDate} AND
+				</if>
+				<if test="mangerInput.patientDesc != null and mangerInput.patientDesc != ''">
+					(a.patient_phone = #{mangerInput.patientDesc} OR a.patient_name = #{mangerInput.patientDesc} OR c.nick_name = #{mangerInput.patientDesc}) AND
+				</if>
+				a.option_status = 3
+			</trim>
+			)e
+		</where>
+		order by e.treatment_date desc
+	</select>
+
+	<select id="selectNumbersList" resultMap="TakeNumberResultMap">
+		SELECT @seq := @seq + 1 AS seq, c.*
+		FROM (
+		SELECT (
+		SELECT @seq := 0
+		) AS r, a.id, a.create_time, a.total_source, a.am_source_used, a.am_source_unuse
+		, a.pm_source_used, a.pm_source_unuse, b.title
+		FROM u_take_number a
+		LEFT JOIN u_hospital b ON a.hospital_id = b.id
+		<choose>
+			<when test="mangerInput.hospitalId != null and mangerInput.hospitalId != '' or mangerInput.startDate != null and mangerInput.startDate != '' or mangerInput.endDate != null and mangerInput.endDate != ''">
+				<where>
+					<trim prefix="(" suffix=")" suffixOverrides="AND">
+						<if test="mangerInput.hospitalId != null and mangerInput.hospitalId != ''">
+							b.id = #{mangerInput.hospitalId} AND
+						</if>
+						<if test="mangerInput.startDate != null and mangerInput.startDate != ''">
+							a.create_time &gt;= #{mangerInput.startDate} AND
+						</if>
+						<if test="mangerInput.endDate != null and mangerInput.endDate != ''">
+							a.create_time &lt;= #{mangerInput.endDate}
+						</if>
+					</trim>
+					)c
+				</where>
+			</when>
+			<otherwise>
+				)c
+			</otherwise>
+		</choose>
+		order by c.create_time asc
+	</select>
+
+
+</mapper>
